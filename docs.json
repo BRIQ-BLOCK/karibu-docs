@@ -69,24 +69,8 @@
           }
         ]
       }
-    ],
-    /*
-    "global": {
-      "anchors": [
-      
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://blog.briq.tz",
-          "icon": "newspaper"
-        }
-      ]
-    }
-    */
+    ]
+  
   },
   "logo": {
     "light": "/logo/light.svg",
