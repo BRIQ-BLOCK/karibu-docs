@@ -17,15 +17,17 @@
             "group": "Getting started",
             "pages": [
               "index",
-              "signup",
-              "development"
+              "signup"
+             
             ]
           },
           {
-            "group": "Customization",
+            "group": "SMS APIs",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "SMS/overview",
+              "SMS/InstantSMS",
+              "SMS/campaigns",
+              "SMS/workspaces"  
             ]
           },
           {
@@ -68,6 +70,7 @@
         ]
       }
     ],
+    /*
     "global": {
       "anchors": [
       
@@ -83,6 +86,7 @@
         }
       ]
     }
+    */
   },
   "logo": {
     "light": "/logo/light.svg",
