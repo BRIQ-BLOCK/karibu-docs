@@ -1,0 +1,35 @@
+---
+title: Requesting Codes
+description: How to request OTP codes securely with rate limits and expiry settings.
+---
+
+# Requesting Codes
+
+Use the OTP request endpoint to generate and send a one-time code to a user.
+
+## Endpoint
+
+- API: [OTP - Request](/Karibu-OTP/index#tag/OTP/operation/requestOTP)
+
+## Recommendations
+
+- Set a sensible expiry (e.g., 2–5 minutes)
+- Limit resend frequency; add cool-downs
+- Localize message content and sender ID
+
+## Example
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/request \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $BRIQ_API_KEY" \
+  -d '{
+    "recipient": "255700000000",
+    "channel": "sms",
+    "expiry_seconds": 180
+  }'
+```
+
+<Note>
+  See also: [Validating Codes](/guides/otp-validating-codes)
+</Note>

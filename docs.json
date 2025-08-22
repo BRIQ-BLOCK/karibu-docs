@@ -24,39 +24,24 @@
             ]
           },
           {
-            "group": "Workspaces",
+            "group": "Working Environment",
             "pages": [
-              "guides/workspaces"
-            ]
-          },
-          {
-            "group": "Campaigns",
-            "pages": [
-              "guides/campaigns"
+              "guides/workspaces",
+              "guides/developer-apps"
             ]
           },
           {
             "group": "Messaging",
             "pages": [
-              "guides/messaging"
-            ]
-          },
-          {
-            "group": "Developer Apps",
-            "pages": [
-              "guides/developer-apps"
+              "guides/messaging",
+              "guides/campaigns"
             ]
           },
           {
             "group": "OTP",
             "pages": [
-              "guides/otp"
-            ]
-          },
-          {
-            "group": "Webhooks & Callbacks",
-            "pages": [
-              "guides/webhooks"
+              "guides/otp-requesting-codes",
+              "guides/otp-validating-codes"
             ]
           }
         ]

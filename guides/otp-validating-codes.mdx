@@ -1,0 +1,34 @@
+---
+title: Validating Codes
+description: Verify OTP codes, handle failures, and secure your flows.
+---
+
+# Validating Codes
+
+Validate user-submitted OTP codes and handle retries and lockouts.
+
+## Endpoint
+
+- API: [OTP - Verify](/Karibu-OTP/index#tag/OTP/operation/verifyOTP)
+
+## Recommendations
+
+- Enforce max attempts per code (e.g., 3–5)
+- Invalidate codes on success and on expiry
+- Return generic errors to avoid leaking validity
+
+## Example
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/verify \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: $BRIQ_API_KEY" \
+  -d '{
+    "recipient": "255700000000",
+    "code": "123456"
+  }'
+```
+
+<Note>
+  Need to resend? See: [Requesting Codes](/guides/otp-requesting-codes)
+</Note>
