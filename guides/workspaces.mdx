@@ -3,19 +3,48 @@ title: Workspaces
 description: Creating and managing workspaces, developer access, and settings.
 ---
 
-# Workspaces
+## Workspaces
 
-Workspaces organize projects, credentials, and access control.
+Workspaces are isolated containers owned by a user that hold configuration, credentials, and resources (campaigns, messaging apps, OTP flows, developer apps). Use separate workspaces for teams, customers, or environments (staging/production).
 
-## Create a workspace
+### When to use a workspace
 
-Use the dashboard or the API to create and configure a workspace. Assign a name, default sender ID, and optional webhook URL.
+- Separate projects/customers or environments.
+- Control ownership and access for resources.
+- Enable Developer Apps when integrations or CI access are needed.
 
-## Developer access
+### Quick how-to
 
-- Grant developer access to limit API scope to development environments.
-- Rotate keys and remove users when offboarding.
+1. Decide the scope for the workspace (team, project, customer, or environment).
+2. Create the workspace from the dashboard or API (set a name, optional description, and whether developer access should be enabled).
+3. Configure workspace-level settings: default sender IDs, webhooks, and access policies.
+4. Add resources: messaging apps, campaigns, and OTP flows.
+5. If integrations or programmatic access are required, enable Developer Apps and create API clients scoped to the workspace.
+6. Rotate keys and review access regularly; remove Developer Apps or users when they are no longer needed.
 
-## Links
+### Best practices and security
 
-- API: [Workspaces](/Karibu-Workspace/index)
+- Minimal access: enable developer access only where necessary.
+- Key management: rotate API keys and Developer App credentials regularly.
+- Audit: track which Developer Apps and API keys exist per workspace and remove unused credentials.
+
+### Next steps
+
+- For exact request and response schemas, visit the API Reference: [Workspaces API](/Karibu-Workspace).
+- If you want language-specific code samples or an interactive playground, say which language and we will add x-codeSamples to the API Reference.
+3. Configure workspace-level settings: default sender IDs, webhooks, and access policies.
+4. Add resources: messaging apps, campaigns, and OTP flows.
+5. If integrations or programmatic access are required, enable Developer Apps and create API clients scoped to the workspace.
+6. Rotate keys and review access regularly; remove Developer Apps or users when they are no longer needed.
+
+## Best practices and security
+
+- Minimal access: enable developer access only where necessary.
+- Key management: rotate API keys and Developer App credentials regularly.
+- Audit: track which Developer Apps and API keys exist per workspace and remove unused credentials.
+
+## Next steps
+
+- For exact request and response schemas, visit the API Reference: [Workspaces API](/Karibu-Workspace).
+- If you want language-specific code samples or an interactive playground, say which language and we will add x-codeSamples to the API Reference.
+

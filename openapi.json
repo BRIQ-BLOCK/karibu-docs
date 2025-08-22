@@ -1,0 +1,2488 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Karibu Briq API",
+        "description": "Karibu developer API",
+        "version": "0.7"
+    },
+    "servers": [
+        {
+            "url": "https://karibu.briq.tz",
+            "description": "Production server"
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "summary": "Hello Briq",
+                "operationId": "hello_briq__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/version": {
+            "get": {
+                "summary": "Get Version",
+                "operationId": "get_version_version_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/karibu/x-api-key": {
+            "get": {
+                "tags": [
+                    "Developer"
+                ],
+                "summary": "Developer Stats",
+                "operationId": "developer_stats_karibu_x_api_key_get",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/workspace/create/": {
+            "post": {
+                "tags": [
+                    "Karibu-Workspace"
+                ],
+                "summary": "Create Workspace Endpoint",
+                "description": "Create a new workspace for the authenticated user.",
+                "operationId": "create_workspace_endpoint_v1_workspace_create__post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorkspaceCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkspaceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/workspace/all/": {
+            "get": {
+                "tags": [
+                    "Karibu-Workspace"
+                ],
+                "summary": "List Workspaces",
+                "description": "Retrieve all workspaces for the authenticated user.",
+                "operationId": "list_workspaces_v1_workspace_all__get",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WorkspaceResponse"
+                                    },
+                                    "title": "Response List Workspaces V1 Workspace All  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/workspace/{workspace_id}": {
+            "get": {
+                "tags": [
+                    "Karibu-Workspace"
+                ],
+                "summary": "Get Workspace Endpoint",
+                "description": "Retrieve a specific workspace, ensuring it belongs to the authenticated user.",
+                "operationId": "get_workspace_endpoint_v1_workspace__workspace_id__get",
+                "parameters": [
+                    {
+                        "name": "workspace_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Workspace Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkspaceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/workspace/update/{workspace_id}": {
+            "patch": {
+                "tags": [
+                    "Karibu-Workspace"
+                ],
+                "summary": "Update Workspace Endpoint",
+                "description": "Update a workspace (only if owned by the authenticated user).",
+                "operationId": "update_workspace_endpoint_v1_workspace_update__workspace_id__patch",
+                "parameters": [
+                    {
+                        "name": "workspace_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Workspace Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorkspaceUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WorkspaceResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/campaign/create/": {
+            "post": {
+                "tags": [
+                    "Karibu-Campaign"
+                ],
+                "summary": "Create Campaign Endpoint",
+                "description": "Create a new campaign (only in developer-accessible workspaces owned by the user).",
+                "operationId": "create_campaign_endpoint_v1_campaign_create__post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CampaignCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CampaignResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/campaign/all/": {
+            "get": {
+                "tags": [
+                    "Karibu-Campaign"
+                ],
+                "summary": "List Campaigns",
+                "description": "Retrieve all campaigns for the authenticated user (developer-accessible workspaces they own).",
+                "operationId": "list_campaigns_v1_campaign_all__get",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CampaignResponse"
+                                    },
+                                    "title": "Response List Campaigns V1 Campaign All  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/campaign/{campaign_id}/": {
+            "get": {
+                "tags": [
+                    "Karibu-Campaign"
+                ],
+                "summary": "Get Campaign Endpoint",
+                "description": "Retrieve a specific campaign, ensuring it's in a developer-accessible workspace owned by the user.",
+                "operationId": "get_campaign_endpoint_v1_campaign__campaign_id___get",
+                "parameters": [
+                    {
+                        "name": "campaign_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Campaign Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CampaignResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/campaign/update/{campaign_id}": {
+            "patch": {
+                "tags": [
+                    "Karibu-Campaign"
+                ],
+                "summary": "Update Campaign Endpoint",
+                "description": "Update a campaign (only if it belongs to a developer-accessible workspace owned by the user).",
+                "operationId": "update_campaign_endpoint_v1_campaign_update__campaign_id__patch",
+                "parameters": [
+                    {
+                        "name": "campaign_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Campaign Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CampaignUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CampaignResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/send-instant": {
+            "post": {
+                "tags": [
+                    "Karibu-Messages"
+                ],
+                "summary": "Send Instant Message",
+                "description": "Send an instant message to one or multiple recipients.",
+                "operationId": "send_instant_message_v1_message_send_instant_post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendInstantMessageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/send-campaign": {
+            "post": {
+                "tags": [
+                    "Karibu-Messages"
+                ],
+                "summary": "Send Campaign Message",
+                "description": "Send a message to all contacts in a campaign.",
+                "operationId": "send_campaign_message_v1_message_send_campaign_post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendCampaignMessageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/logs": {
+            "get": {
+                "tags": [
+                    "Karibu-Messages"
+                ],
+                "summary": "Get Message Logs",
+                "description": "Fetch all message logs for the authenticated user.",
+                "operationId": "get_message_logs_v1_message_logs_get",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageLogsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/history": {
+            "get": {
+                "tags": [
+                    "Karibu-Messages"
+                ],
+                "summary": "Get User Messages",
+                "description": "Retrieve all messages sent by the authenticated user.",
+                "operationId": "get_user_messages_v1_message_history_get",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MessageResponseRaw"
+                                    },
+                                    "title": "Response Get User Messages V1 Message History Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/history/recipient/{recipient}": {
+            "get": {
+                "tags": [
+                    "Karibu-Messages"
+                ],
+                "summary": "Get Messages By Recipient Endpoint",
+                "description": "Retrieve all messages sent to a specific recipient.",
+                "operationId": "get_messages_by_recipient_endpoint_v1_message_history_recipient__recipient__get",
+                "parameters": [
+                    {
+                        "name": "recipient",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Recipient"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/MessageResponseRaw"
+                                    },
+                                    "title": "Response Get Messages By Recipient Endpoint V1 Message History Recipient  Recipient  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/message/message-log/{message_id}": {
+            "get": {
+                "tags": [
+                    "Karibu-Messages"
+                ],
+                "summary": "Get Message Detail",
+                "description": "Retrieve details of a specific message.",
+                "operationId": "get_message_detail_v1_message_message_log__message_id__get",
+                "parameters": [
+                    {
+                        "name": "message_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Message Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MessageResponseRaw"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/developer_apps/": {
+            "post": {
+                "tags": [
+                    "Karibu-Developer Apps"
+                ],
+                "summary": "Create Developer App Endpoint",
+                "description": "Create a new developer app (optionally in a workspace owned by the user).",
+                "operationId": "create_developer_app_endpoint_v1_developer_apps__post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeveloperAppCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeveloperAppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/developer_apps/all": {
+            "get": {
+                "tags": [
+                    "Karibu-Developer Apps"
+                ],
+                "summary": "List Developer Apps",
+                "description": "List all developer apps for the authenticated user.",
+                "operationId": "list_developer_apps_v1_developer_apps_all_get",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DeveloperAppResponse"
+                                    },
+                                    "title": "Response List Developer Apps V1 Developer Apps All Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/developer_apps/{app_id}": {
+            "get": {
+                "tags": [
+                    "Karibu-Developer Apps"
+                ],
+                "summary": "Get Developer App Endpoint",
+                "description": "Get a developer app by its ID.",
+                "operationId": "get_developer_app_endpoint_v1_developer_apps__app_id__get",
+                "parameters": [
+                    {
+                        "name": "app_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeveloperAppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/developer_apps/get-by-key/{app_key}": {
+            "get": {
+                "tags": [
+                    "Karibu-Developer Apps"
+                ],
+                "summary": "Get Developer App By Key Endpoint",
+                "description": "Get a developer app by its app_key.",
+                "operationId": "get_developer_app_by_key_endpoint_v1_developer_apps_get_by_key__app_key__get",
+                "parameters": [
+                    {
+                        "name": "app_key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Key"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeveloperAppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/developer_apps/workspaces/{workspace_id}": {
+            "get": {
+                "tags": [
+                    "Karibu-Developer Apps"
+                ],
+                "summary": "Get Workspace Developer Apps Endpoint",
+                "description": "List all developer apps for a workspace (owned by the user).",
+                "operationId": "get_workspace_developer_apps_endpoint_v1_developer_apps_workspaces__workspace_id__get",
+                "parameters": [
+                    {
+                        "name": "workspace_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Workspace Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/DeveloperAppResponse"
+                                    },
+                                    "title": "Response Get Workspace Developer Apps Endpoint V1 Developer Apps Workspaces  Workspace Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/developer_apps/update/{app_id}": {
+            "patch": {
+                "tags": [
+                    "Karibu-Developer Apps"
+                ],
+                "summary": "Update Developer App Endpoint",
+                "description": "Update a developer app.",
+                "operationId": "update_developer_app_endpoint_v1_developer_apps_update__app_id__patch",
+                "parameters": [
+                    {
+                        "name": "app_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeveloperAppUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DeveloperAppResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/developer_apps/purge/{app_id}": {
+            "delete": {
+                "tags": [
+                    "Karibu-Developer Apps"
+                ],
+                "summary": "Delete Developer App Endpoint",
+                "description": "Delete a developer app.",
+                "operationId": "delete_developer_app_endpoint_v1_developer_apps_purge__app_id__delete",
+                "parameters": [
+                    {
+                        "name": "app_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Id"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/otp/request": {
+            "post": {
+                "tags": [
+                    "Karibu-OTP"
+                ],
+                "summary": "Request Otp Developer App",
+                "operationId": "request_otp_developer_app_v1_otp_request_post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OTPRequestDeveloperAppSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/otp/verify": {
+            "post": {
+                "tags": [
+                    "Karibu-OTP"
+                ],
+                "summary": "Verify Otp Developer App",
+                "operationId": "verify_otp_developer_app_v1_otp_verify_post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OTPVerifyDeveloperAppSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/otp/resend": {
+            "post": {
+                "tags": [
+                    "Karibu-OTP"
+                ],
+                "summary": "Resend Otp Developer App",
+                "operationId": "resend_otp_developer_app_v1_otp_resend_post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OTPResendDeveloperAppSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/otp/invalidate": {
+            "post": {
+                "tags": [
+                    "Karibu-OTP"
+                ],
+                "summary": "Invalidate Otp Developer App",
+                "operationId": "invalidate_otp_developer_app_v1_otp_invalidate_post",
+                "parameters": [
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OTPInvalidateDeveloperAppSchema"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/otp/status": {
+            "get": {
+                "tags": [
+                    "Karibu-OTP"
+                ],
+                "summary": "Check Otp Status",
+                "operationId": "check_otp_status_v1_otp_status_get",
+                "parameters": [
+                    {
+                        "name": "phone_number",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Phone Number"
+                        }
+                    },
+                    {
+                        "name": "app_key",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "App Key"
+                        }
+                    },
+                    {
+                        "name": "X-API-Key",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "X-Api-Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BaseResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "BaseResponse": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "title": "Success"
+                    },
+                    "message": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "data": {
+                        "anyOf": [
+                            {
+                                "type": "object"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Data"
+                    },
+                    "status_code": {
+                        "type": "integer",
+                        "title": "Status Code",
+                        "default": 200
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "success",
+                    "message"
+                ],
+                "title": "BaseResponse"
+            },
+            "CampaignCreate": {
+                "properties": {
+                    "workspace_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "Workspace Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    },
+                    "launch_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Launch Date"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "workspace_id",
+                    "name",
+                    "launch_date"
+                ],
+                "title": "CampaignCreate"
+            },
+            "CampaignFrequency": {
+                "type": "string",
+                "enum": [
+                    "once",
+                    "hourly",
+                    "daily",
+                    "weekly",
+                    "monthly"
+                ],
+                "title": "CampaignFrequency",
+                "description": "Campaign Frequency."
+            },
+            "CampaignResponse": {
+                "properties": {
+                    "campaign_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "Campaign Id"
+                    },
+                    "workspace_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "Workspace Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    },
+                    "launch_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Launch Date"
+                    },
+                    "created_by": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "Created By"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "campaign_id",
+                    "workspace_id",
+                    "name",
+                    "launch_date",
+                    "created_by",
+                    "created_at"
+                ],
+                "title": "CampaignResponse"
+            },
+            "CampaignUpdate": {
+                "properties": {
+                    "name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    },
+                    "launch_date": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Launch Date"
+                    }
+                },
+                "type": "object",
+                "title": "CampaignUpdate"
+            },
+            "DeveloperAppCreate": {
+                "properties": {
+                    "app_name": {
+                        "type": "string",
+                        "title": "App Name",
+                        "example": "My App"
+                    },
+                    "app_description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "App Description",
+                        "example": "A description of my app."
+                    },
+                    "workspace_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Workspace Id",
+                        "example": "b2b8e2e8-6f3a-4c3b-8e2e-123456789abc"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "app_name"
+                ],
+                "title": "DeveloperAppCreate"
+            },
+            "DeveloperAppResponse": {
+                "properties": {
+                    "app_id": {
+                        "type": "string",
+                        "title": "App Id"
+                    },
+                    "app_name": {
+                        "type": "string",
+                        "title": "App Name"
+                    },
+                    "app_description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "App Description"
+                    },
+                    "app_key": {
+                        "type": "string",
+                        "title": "App Key"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "workspace_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Workspace Id"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Updated At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "app_id",
+                    "app_name",
+                    "app_key",
+                    "user_id",
+                    "created_at",
+                    "updated_at"
+                ],
+                "title": "DeveloperAppResponse"
+            },
+            "DeveloperAppUpdate": {
+                "properties": {
+                    "app_name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "App Name",
+                        "example": "Updated App Name"
+                    },
+                    "app_description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "App Description",
+                        "example": "Updated description."
+                    },
+                    "workspace_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Workspace Id",
+                        "example": "b2b8e2e8-6f3a-4c3b-8e2e-123456789abc"
+                    }
+                },
+                "type": "object",
+                "title": "DeveloperAppUpdate"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "MessageLogResponse": {
+                "properties": {
+                    "log_id": {
+                        "type": "string",
+                        "title": "Log Id"
+                    },
+                    "message_id": {
+                        "type": "string",
+                        "title": "Message Id"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/MessageStatusEnum"
+                    },
+                    "timestamp": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Timestamp"
+                    },
+                    "error_details": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Error Details"
+                    },
+                    "response_group_id": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Response Group Id"
+                    },
+                    "response_group_name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Response Group Name"
+                    },
+                    "response_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Response Id"
+                    },
+                    "response_name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Response Name"
+                    },
+                    "response_description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Response Description"
+                    },
+                    "campaign_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Campaign Id"
+                    },
+                    "campaign_name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Campaign Name"
+                    },
+                    "content": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Content"
+                    },
+                    "recipient": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Recipient"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "log_id",
+                    "message_id",
+                    "status",
+                    "timestamp"
+                ],
+                "title": "MessageLogResponse"
+            },
+            "MessageLogsResponse": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "logs": {
+                        "items": {
+                            "$ref": "#/components/schemas/MessageLogResponse"
+                        },
+                        "type": "array",
+                        "title": "Logs"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id",
+                    "logs"
+                ],
+                "title": "MessageLogsResponse"
+            },
+            "MessageResponseRaw": {
+                "properties": {
+                    "message_id": {
+                        "type": "string",
+                        "title": "Message Id"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "recipient": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Recipient"
+                    },
+                    "campaign_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Campaign Id"
+                    },
+                    "channel_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Channel Id"
+                    },
+                    "sender_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Sender Id"
+                    },
+                    "content": {
+                        "type": "string",
+                        "title": "Content"
+                    },
+                    "status": {
+                        "$ref": "#/components/schemas/MessageStatusEnum"
+                    },
+                    "sent_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Sent At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "message_id",
+                    "user_id",
+                    "content",
+                    "status",
+                    "sent_at"
+                ],
+                "title": "MessageResponseRaw"
+            },
+            "MessageStatusEnum": {
+                "type": "string",
+                "enum": [
+                    "pending",
+                    "sent",
+                    "failed"
+                ],
+                "title": "MessageStatusEnum"
+            },
+            "OTPInvalidateDeveloperAppSchema": {
+                "properties": {
+                    "phone_number": {
+                        "type": "string",
+                        "title": "Phone Number",
+                        "description": "Recipient's phone number",
+                        "example": "+255712345678"
+                    },
+                    "app_key": {
+                        "type": "string",
+                        "title": "App Key",
+                        "description": "Developer app key",
+                        "example": "devapp_123456"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "phone_number",
+                    "app_key"
+                ],
+                "title": "OTPInvalidateDeveloperAppSchema"
+            },
+            "OTPRequestDeveloperAppSchema": {
+                "properties": {
+                    "phone_number": {
+                        "type": "string",
+                        "title": "Phone Number",
+                        "description": "Recipient's phone number",
+                        "example": "+255712345678"
+                    },
+                    "app_key": {
+                        "type": "string",
+                        "title": "App Key",
+                        "description": "Developer app key",
+                        "example": "devapp_123456"
+                    },
+                    "sender_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Sender Id",
+                        "description": "Sender ID for SMS (defaults to 'BRIQ OTP')",
+                        "example": "BRIQ OTP"
+                    },
+                    "otp_length": {
+                        "type": "integer",
+                        "title": "Otp Length",
+                        "description": "Length of OTP code",
+                        "default": 6,
+                        "example": 6
+                    },
+                    "minutes_to_expire": {
+                        "type": "integer",
+                        "title": "Minutes To Expire",
+                        "description": "OTP expiry time in minutes",
+                        "default": 10,
+                        "example": 10
+                    },
+                    "delivery_method": {
+                        "type": "string",
+                        "title": "Delivery Method",
+                        "description": "Delivery method: sms or call",
+                        "default": "sms",
+                        "example": "sms"
+                    },
+                    "message_template": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Message Template",
+                        "description": "Custom OTP message template",
+                        "example": "Your OTP is {code}"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "phone_number",
+                    "app_key"
+                ],
+                "title": "OTPRequestDeveloperAppSchema"
+            },
+            "OTPResendDeveloperAppSchema": {
+                "properties": {
+                    "phone_number": {
+                        "type": "string",
+                        "title": "Phone Number",
+                        "description": "Recipient's phone number",
+                        "example": "+255712345678"
+                    },
+                    "app_key": {
+                        "type": "string",
+                        "title": "App Key",
+                        "description": "Developer app key",
+                        "example": "devapp_123456"
+                    },
+                    "sender_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Sender Id",
+                        "description": "Sender ID for SMS (defaults to 'BRIQ OTP')",
+                        "example": "BRIQ OTP"
+                    },
+                    "otp_length": {
+                        "type": "integer",
+                        "title": "Otp Length",
+                        "description": "Length of OTP code",
+                        "default": 6,
+                        "example": 6
+                    },
+                    "minutes_to_expire": {
+                        "type": "integer",
+                        "title": "Minutes To Expire",
+                        "description": "OTP expiry time in minutes",
+                        "default": 10,
+                        "example": 10
+                    },
+                    "delivery_method": {
+                        "type": "string",
+                        "title": "Delivery Method",
+                        "description": "Delivery method: sms or call",
+                        "default": "sms",
+                        "example": "sms"
+                    },
+                    "message_template": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Message Template",
+                        "description": "Custom OTP message template",
+                        "example": "Your OTP is {code}"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "phone_number",
+                    "app_key"
+                ],
+                "title": "OTPResendDeveloperAppSchema"
+            },
+            "OTPVerifyDeveloperAppSchema": {
+                "properties": {
+                    "phone_number": {
+                        "type": "string",
+                        "title": "Phone Number",
+                        "description": "Recipient's phone number",
+                        "example": "+255712345678"
+                    },
+                    "app_key": {
+                        "type": "string",
+                        "title": "App Key",
+                        "description": "Developer app key",
+                        "example": "devapp_123456"
+                    },
+                    "code": {
+                        "type": "string",
+                        "title": "Code",
+                        "description": "OTP code to verify",
+                        "example": "123456"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "phone_number",
+                    "app_key",
+                    "code"
+                ],
+                "title": "OTPVerifyDeveloperAppSchema"
+            },
+            "SendCampaignMessageRequest": {
+                "properties": {
+                    "campaign_id": {
+                        "type": "string",
+                        "title": "Campaign Id"
+                    },
+                    "group_id": {
+                        "type": "string",
+                        "title": "Group Id"
+                    },
+                    "content": {
+                        "type": "string",
+                        "title": "Content",
+                        "example": "Campaign message from Briq"
+                    },
+                    "sender_id": {
+                        "type": "string",
+                        "maxLength": 13,
+                        "minLength": 2,
+                        "title": "Sender Id"
+                    },
+                    "start_date": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Start Date",
+                        "description": "When sending starts",
+                        "default": "2025-08-22T15:54:00.595379"
+                    },
+                    "end_date": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "End Date"
+                    },
+                    "frequency": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/components/schemas/CampaignFrequency"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "default": "once"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "campaign_id",
+                    "group_id",
+                    "content",
+                    "sender_id"
+                ],
+                "title": "SendCampaignMessageRequest",
+                "description": "Campaign sending Request Schema."
+            },
+            "SendInstantMessageRequest": {
+                "properties": {
+                    "content": {
+                        "type": "string",
+                        "title": "Content",
+                        "example": "Ping from Briq"
+                    },
+                    "recipients": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Recipients",
+                        "example": [
+                            "255788344348"
+                        ]
+                    },
+                    "sender_id": {
+                        "type": "string",
+                        "title": "Sender Id"
+                    },
+                    "campaign_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Campaign Id"
+                    },
+                    "groups": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Groups",
+                        "example": [
+                            "group_id",
+                            "group_id"
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "content",
+                    "recipients",
+                    "sender_id"
+                ],
+                "title": "SendInstantMessageRequest"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            },
+            "WorkspaceCreate": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    },
+                    "developer_access": {
+                        "type": "boolean",
+                        "title": "Developer Access",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "title": "WorkspaceCreate"
+            },
+            "WorkspaceResponse": {
+                "properties": {
+                    "workspace_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "Workspace Id"
+                    },
+                    "user_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "title": "User Id"
+                    },
+                    "name": {
+                        "type": "string",
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At"
+                    },
+                    "developer_access": {
+                        "type": "boolean",
+                        "title": "Developer Access"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "workspace_id",
+                    "user_id",
+                    "name",
+                    "created_at",
+                    "developer_access"
+                ],
+                "title": "WorkspaceResponse"
+            },
+            "WorkspaceUpdate": {
+                "properties": {
+                    "name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Name"
+                    },
+                    "description": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Description"
+                    },
+                    "developer_access": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Developer Access"
+                    }
+                },
+                "type": "object",
+                "title": "WorkspaceUpdate"
+            }
+        }
+    }
+}
