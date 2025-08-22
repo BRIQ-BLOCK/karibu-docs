@@ -1,25 +1,129 @@
 ---
-title: OTP
-description: Requesting, verifying, and resending codes securely.
+title: OTP (One-Time Passwords)
+description: Implement secure authentication flows with OTP codes delivered via SMS. Learn how to request and verify OTP codes using developer apps.
+icon: 'lock'
 ---
 
-# OTP
+# OTP (One-Time Passwords)
 
-Use the OTP APIs for authentication flows such as login, signup, or sensitive actions.
+OTP provides secure user verification through temporary codes delivered via SMS. This feature is essential for implementing secure authentication flows in your applications.
 
-## Request
+## What is OTP?
 
-Trigger an OTP to a phone number with expiry and channel settings.
+An OTP is a unique, time-limited code sent to a user's phone number for verification purposes. In Briq's implementation, OTP codes are delivered via SMS and require developer apps for access.
 
-## Verify
+### Key Characteristics
+- **Time-Limited**: Codes expire after a set duration
+- **Single-Use**: Each code can only be used once  
+- **Developer App Restricted**: Only accessible through configured developer apps
+- **SMS Delivery**: Codes are sent via SMS messages
+- **Workspace Access**: Requires workspaces with developer access enabled
 
-Validate the code and consume it; lock after repeated failures.
+## Requirements
 
-## Resend
+### Developer Apps
+OTP services can only be accessed through developer apps. You must:
+1. Create a developer app
+2. Link it to a workspace with `developer_access = true`
+3. Use the developer app credentials for OTP requests
 
-Apply rate limits and cooldowns to prevent abuse.
+### Workspace Configuration
+The workspace must have developer access enabled:
+```bash
+curl -X PATCH https://karibu.briq.tz/v1/workspace/update/ws_abc123xyz789def \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "developer_access": true
+}'
+```
 
-## Links
+## OTP Workflow
 
-- API: [OTP](/Karibu-OTP/index)
-- Best practices: [OTP settings](/best-practices)
+### 1. Request OTP Code
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/request/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "phone_number": "255712345678",
+  "developer_app_id": "dev_app_abc123xyz789"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "otp_id": "otp_xyz789abc123def",
+  "phone_number": "255712345678", 
+  "message": "Your verification code is 123456",
+  "sent_at": "2024-08-10T10:30:00Z",
+  "expires_at": "2024-08-10T10:35:00Z"
+}
+```
+
+### 2. Verify OTP Code
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "otp_id": "otp_xyz789abc123def",
+  "code": "123456",
+  "developer_app_id": "dev_app_abc123xyz789"
+}'
+```
+
+**Response (Success):**
+```json
+{
+  "success": true,
+  "otp_id": "otp_xyz789abc123def",
+  "verified": true,
+  "message": "OTP verified successfully",
+  "verified_at": "2024-08-10T10:32:00Z"
+}
+```
+
+**Response (Failed):**
+```json
+{
+  "success": false,
+  "otp_id": "otp_xyz789abc123def", 
+  "verified": false,
+  "error": "Invalid or expired OTP code"
+}
+```
+
+## Best Practices
+
+### Security
+1. **Expire Codes**: Implement reasonable expiration times for OTP codes
+2. **Rate Limiting**: Limit OTP requests per phone number to prevent abuse
+3. **Secure Storage**: Never store OTP codes in plain text
+4. **Input Validation**: Validate phone numbers before requesting OTP
+
+### User Experience  
+1. **Clear Instructions**: Provide clear messaging about OTP process
+2. **Resend Options**: Allow users to request new codes if needed
+3. **Error Handling**: Provide helpful error messages for failed verification
+4. **Timeout Feedback**: Show users how long codes remain valid
+
+### Developer Apps
+1. **Dedicated Apps**: Create specific developer apps for OTP services
+2. **Workspace Linking**: Ensure apps are linked to workspaces with developer access
+3. **Credential Security**: Secure developer app credentials appropriately
+4. **Access Monitoring**: Monitor and log OTP access patterns
+
+### Integration
+1. **Error Recovery**: Implement retry logic for failed requests
+2. **Logging**: Log OTP events for monitoring and debugging
+3. **Testing**: Use test phone numbers during development
+4. **Monitoring**: Track OTP success rates and delivery times
+
+---
+
+*For detailed API reference, visit [OTP API](/Karibu-OTP)*

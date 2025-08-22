@@ -1,50 +1,97 @@
 ---
 title: Workspaces
-description: Creating and managing workspaces, developer access, and settings.
+description: Create and manage workspaces to organize your SMS projects, campaigns, and developer apps with Briq's workspace system.
+icon: 'workspace'
 ---
 
-## Workspaces
+# Workspaces
 
-Workspaces are isolated containers owned by a user that hold configuration, credentials, and resources (campaigns, messaging apps, OTP flows, developer apps). Use separate workspaces for teams, customers, or environments (staging/production).
+Workspaces are containers that help you organize your SMS activities, campaigns, and developer apps. Each workspace can contain multiple campaigns and control whether developer apps can access it through the developer access setting.
 
-### When to use a workspace
+## What is a Workspace?
 
-- Separate projects/customers or environments.
-- Control ownership and access for resources.
-- Enable Developer Apps when integrations or CI access are needed.
+A workspace is a logical container that holds:
+- **Campaigns**: Organize your messaging campaigns
+- **Developer Apps**: Control which apps can access the workspace
+- **Settings**: Basic workspace configuration like name and description
+- **Developer Access**: Enable or disable developer app access to this workspace
 
-### Quick how-to
+## When to Use Workspaces
 
-1. Decide the scope for the workspace (team, project, customer, or environment).
-2. Create the workspace from the dashboard or API (set a name, optional description, and whether developer access should be enabled).
-3. Configure workspace-level settings: default sender IDs, webhooks, and access policies.
-4. Add resources: messaging apps, campaigns, and OTP flows.
-5. If integrations or programmatic access are required, enable Developer Apps and create API clients scoped to the workspace.
-6. Rotate keys and review access regularly; remove Developer Apps or users when they are no longer needed.
+### Project Organization
+- **Marketing Campaigns**: Separate workspace for promotional activities
+- **Transactional Messages**: Dedicated workspace for order confirmations, alerts
+- **Client Projects**: Individual workspaces for different clients
+- **Development vs Production**: Separate environments for testing and live usage
 
-### Best practices and security
+### Developer Access Control
+- **Developer-Accessible Workspaces**: Enable `developer_access = true` for workspaces that need OTP services and developer app integration
+- **Standard Workspaces**: Keep `developer_access = false` for simple messaging campaigns
 
-- Minimal access: enable developer access only where necessary.
-- Key management: rotate API keys and Developer App credentials regularly.
-- Audit: track which Developer Apps and API keys exist per workspace and remove unused credentials.
+## Creating and Managing Workspaces
 
-### Next steps
+### Creating a Workspace
 
-- For exact request and response schemas, visit the API Reference: [Workspaces API](/Karibu-Workspace).
-- If you want language-specific code samples or an interactive playground, say which language and we will add x-codeSamples to the API Reference.
-3. Configure workspace-level settings: default sender IDs, webhooks, and access policies.
-4. Add resources: messaging apps, campaigns, and OTP flows.
-5. If integrations or programmatic access are required, enable Developer Apps and create API clients scoped to the workspace.
-6. Rotate keys and review access regularly; remove Developer Apps or users when they are no longer needed.
+```bash
+curl -X POST https://karibu.briq.tz/v1/workspace/create/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "Marketing Department",
+  "description": "Workspace for all marketing campaigns and communications",
+  "developer_access": false
+}'
+```
 
-## Best practices and security
+**Response:**
+```json
+{
+  "success": true,
+  "workspace_id": "ws_abc123xyz789def",
+  "name": "Marketing Department",
+  "description": "Workspace for all marketing campaigns and communications",
+  "developer_access": false,
+  "created_at": "2024-08-10T10:30:00Z"
+}
+```
 
-- Minimal access: enable developer access only where necessary.
-- Key management: rotate API keys and Developer App credentials regularly.
-- Audit: track which Developer Apps and API keys exist per workspace and remove unused credentials.
+### Listing All Workspaces
 
-## Next steps
+```bash
+curl -X GET https://karibu.briq.tz/v1/workspace/all/ \
+-H "X-API-Key: your_api_key_here"
+```
 
-- For exact request and response schemas, visit the API Reference: [Workspaces API](/Karibu-Workspace).
-- If you want language-specific code samples or an interactive playground, say which language and we will add x-codeSamples to the API Reference.
+### Getting Workspace Details
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/workspace/ws_abc123xyz789def \
+-H "X-API-Key: your_api_key_here"
+```
+
+### Updating a Workspace
+
+```bash
+curl -X PATCH https://karibu.briq.tz/v1/workspace/update/ws_abc123xyz789def \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "Updated Marketing Department",
+  "description": "Updated description",
+  "developer_access": true
+}'
+```
+
+## Best Practices
+
+### Workspace Organization
+1. **Clear Naming**: Use descriptive names that indicate the workspace purpose
+2. **Separate Environments**: Create different workspaces for development and production
+3. **Enable Developer Access**: Only enable when you need OTP services or developer apps
+4. **Documentation**: Keep track of what each workspace is used for
+
+### Security Considerations
+1. **Developer Access**: Only enable on workspaces that actually need OTP functionality
+2. **Access Control**: Be mindful of which workspaces have developer access enabled
+3. **Environment Separation**: Keep development and production workspaces separate
 

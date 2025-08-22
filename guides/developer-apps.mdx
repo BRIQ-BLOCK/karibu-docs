@@ -1,22 +1,123 @@
 ---
-title: Developer Apps
-description: Why developer apps exist and how to link them to workspaces.
+title: Developer Apps  
+description: Create and manage developer applications for accessing OTP services and advanced integrations with Briq's SMS platform.
+icon: 'code'
 ---
 
 # Developer Apps
 
-Developer apps represent client integrations with credentials and permissions.
+Developer Apps provide access to advanced Briq features, particularly OTP services. They act as secure integrations that can be linked to workspaces with developer access enabled.
 
-## Why
+## What are Developer Apps?
 
-- Isolate credentials per application/environment.
-- Control access per workspace.
+Developer Apps are client applications that enable access to OTP services and other developer-restricted features in the Briq platform. Currently, they are primarily used for OTP authentication flows.
 
-## Link to workspaces
+### Key Characteristics
+- **OTP Access**: Required for all OTP request and verification operations
+- **Workspace Linking**: Must be linked to workspaces with developer access enabled
+- **Secure Integration**: Provide controlled access to advanced features
+- **Simple Management**: Easy creation and configuration
 
-Create an app and associate it with one or more workspaces.
+## Requirements for Developer Apps
 
-## Links
+### Workspace Access
+- Developer apps can only work with workspaces that have `developer_access = true`
+- You must enable developer access on your workspace before linking apps
 
-- API: [Developer Apps](/Karibu-Developer-Apps/index)
-- API: [Workspaces](/Karibu-Workspace/index)
+### OTP Services  
+- All OTP operations require a valid developer app ID
+- OTP requests and verifications must include the developer app ID
+
+## Managing Developer Apps
+
+### Creating a Developer App
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/developer-apps/create/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "My Authentication App",
+  "description": "Developer app for OTP authentication services",
+  "workspace_id": "ws_abc123xyz789def"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "developer_app_id": "dev_app_xyz789abc123",
+  "name": "My Authentication App",
+  "description": "Developer app for OTP authentication services", 
+  "workspace_id": "ws_abc123xyz789def",
+  "created_at": "2024-08-10T10:30:00Z"
+}
+```
+
+### Listing Developer Apps
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/developer-apps/all/ \
+-H "X-API-Key: your_api_key_here"
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "developer_apps": [
+    {
+      "developer_app_id": "dev_app_xyz789abc123",
+      "name": "My Authentication App",
+      "description": "Developer app for OTP authentication services",
+      "workspace_id": "ws_abc123xyz789def", 
+      "created_at": "2024-08-10T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Getting Developer App Details
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/developer-apps/dev_app_xyz789abc123 \
+-H "X-API-Key: your_api_key_here"
+```
+
+### Updating a Developer App
+
+```bash
+curl -X PATCH https://karibu.briq.tz/v1/developer-apps/update/dev_app_xyz789abc123 \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "Updated Authentication App",
+  "description": "Updated developer app for enhanced OTP services"
+}'
+```
+
+## Best Practices
+
+### Developer App Management
+1. **Descriptive Names**: Use clear names that indicate the app's purpose
+2. **Workspace Linking**: Ensure apps are linked to workspaces with developer access
+3. **Single Purpose**: Create separate apps for different services or environments
+4. **Regular Review**: Periodically review and clean up unused apps
+
+### Security Considerations
+1. **Access Control**: Only create apps when necessary for OTP services
+2. **Monitoring**: Track developer app usage and access patterns
+3. **Documentation**: Keep records of what each app is used for
+4. **Environment Separation**: Use different apps for development and production
+
+### Integration Tips
+1. **Error Handling**: Implement robust error handling for app creation and OTP calls
+2. **ID Storage**: Securely store and manage developer app IDs
+3. **Testing**: Test developer app functionality in development environments
+4. **Logging**: Log developer app activities for debugging and monitoring
+
+
+---
+
+*For detailed API reference, visit [Developer Apps API](/Karibu-Developer-Apps)*

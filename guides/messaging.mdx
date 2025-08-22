@@ -1,21 +1,182 @@
 ---
-title: Instant Messages
-description: Sending instant messages, campaigns, and groups.
+title: Messaging
+description: Send instant messages and manage campaigns with Briq's SMS platform. Learn how to send instant messages and create campaigns for bulk messaging.
+icon: 'message'
 ---
 
-# Instant Messages
+# Messaging
 
-Covers instant transactional messages and campaign-based sends.
+Briq provides two main approaches for sending SMS messages: instant messages for immediate delivery and campaigns for organized bulk messaging within workspaces.
 
-## Instant messages
+## Message Types
 
-Use for OTPs, receipts, alerts. Provide content, recipients, and sender ID.
+### Instant Messages
+- **Purpose**: Immediate, one-time messages
+- **Use cases**: Notifications, alerts, transactional messages
+- **Recipients**: Individual phone numbers
+- **Delivery**: Immediate sending
 
-## Groups and lists
+### Campaign Messages  
+- **Purpose**: Organized messaging within workspaces
+- **Use cases**: Marketing campaigns, bulk communications
+- **Recipients**: Phone number lists
+- **Management**: Created and managed within workspaces
 
-Organize recipients into groups for targeting and reuse across campaigns.
+## Sending Instant Messages
 
-## Links
+### Basic Instant Message
 
-- API: [Messages](/Karibu-Messages/index)
-- API: [Campaigns](/Karibu-Campaign/index)
+```bash
+curl -X POST https://karibu.briq.tz/v1/messages/instant/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "phone_number": "255712345678",
+  "message": "Hello! This is a test message from Briq.",
+  "sender_id": "YourBrand"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message_id": "msg_abc123xyz789def",
+  "phone_number": "255712345678",
+  "message": "Hello! This is a test message from Briq.",
+  "sender_id": "YourBrand",
+  "status": "sent",
+  "created_at": "2024-08-10T10:30:00Z"
+}
+```
+
+### Batch Instant Messages
+
+Send to multiple recipients at once:
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/messages/send-batch \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "recipients": ["255712345678", "255698765432", "255611223344"],
+  "message": "System maintenance scheduled for tonight 11 PM - 2 AM. Expect service interruption.",
+  "sender_id": "SUPPORT"
+}'
+```
+
+### Instant Message Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `phone_number` | string | Yes | Recipient's phone number (with country code) |
+| `message` | string | Yes | SMS message content (max 160 characters for single SMS) |
+| `sender_id` | string | Yes | Your brand name or sender identifier |
+
+## Managing Campaigns
+
+Campaigns are created within workspaces and allow you to organize and send bulk messages.
+
+### Creating a Campaign
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/campaigns/create/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "workspace_id": "ws_abc123xyz789def",
+  "name": "Summer Sale Campaign",
+  "description": "Promotional campaign for summer discounts"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "campaign_id": "camp_xyz789abc123def",
+  "workspace_id": "ws_abc123xyz789def", 
+  "name": "Summer Sale Campaign",
+  "description": "Promotional campaign for summer discounts",
+  "created_at": "2024-08-10T10:30:00Z"
+}
+```
+
+### Listing Campaigns
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/campaigns/all/ \
+-H "X-API-Key: your_api_key_here"
+```
+
+### Getting Campaign Details
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/campaigns/camp_xyz789abc123def \
+-H "X-API-Key: your_api_key_here"
+```
+
+### Updating a Campaign
+
+```bash
+curl -X PATCH https://karibu.briq.tz/v1/campaigns/update/camp_xyz789abc123def \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "Updated Summer Sale Campaign",
+  "description": "Updated promotional campaign description"
+}'
+```
+
+### Sending Campaign Messages
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/messages/campaign/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "campaign_id": "camp_xyz789abc123def",
+  "phone_numbers": ["255712345678", "255787654321"],
+  "message": "🏖️ Summer Sale: 30% off all items! Use code SUMMER30. Valid until Aug 31st.",
+  "sender_id": "YourStore"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "campaign_id": "camp_xyz789abc123def",
+  "message_ids": ["msg_123", "msg_124"],
+  "recipients_count": 2,
+  "message": "🏖️ Summer Sale: 30% off all items! Use code SUMMER30. Valid until Aug 31st.",
+  "sender_id": "YourStore",
+  "sent_at": "2024-08-10T10:30:00Z"
+}
+```
+
+## Best Practices
+
+### Message Content
+1. **Keep it concise**: SMS has character limits, be clear and direct
+2. **Include sender identification**: Always use a recognizable sender ID
+3. **Add value**: Make sure your message provides useful information
+4. **Call to action**: Include clear next steps if needed
+
+### Phone Number Format
+- Always include country code (e.g., 255 for Tanzania)
+- Use format: 255712345678 (no spaces or special characters)
+- Validate numbers before sending to avoid errors
+
+### Campaign Organization
+1. **Use descriptive names**: Make campaigns easy to identify
+2. **Workspace separation**: Keep different projects in separate workspaces
+3. **Regular cleanup**: Archive or delete old campaigns periodically
+
+### Error Handling
+- Always check response status before proceeding
+- Implement retry logic for failed messages
+- Log errors for debugging and monitoring
+- Validate phone numbers before sending
+
+---

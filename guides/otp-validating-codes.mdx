@@ -1,34 +1,111 @@
 ---
-title: Validating Codes
-description: Verify OTP codes, handle failures, and secure your flows.
+title: Validating OTP Codes
+description: Learn how to securely validate OTP codes using the Briq v0.7 API with developer apps for user verification.
+icon: 'shield-check'
 ---
 
-# Validating Codes
+# Validating OTP Codes
 
-Validate user-submitted OTP codes and handle retries and lockouts.
+This guide covers how to validate OTP codes that users submit after receiving them via SMS. OTP validation requires the same developer app used for requesting the code.
 
-## Endpoint
+## Prerequisites
 
-- API: [OTP - Verify](/Karibu-OTP/index#tag/OTP/operation/verifyOTP)
+Before validating OTP codes, ensure you have:
+1. A valid `otp_id` from a previous OTP request
+2. The same `developer_app_id` used for requesting the code
+3. Your API key for authentication
 
-## Recommendations
+## Quick Start
 
-- Enforce max attempts per code (e.g., 3–5)
-- Invalidate codes on success and on expiry
-- Return generic errors to avoid leaking validity
-
-## Example
+Validate an OTP code submitted by a user:
 
 ```bash
-curl -X POST https://karibu.briq.tz/v1/otp/verify \
-  -H "Content-Type: application/json" \
-  -H "X-API-Key: $BRIQ_API_KEY" \
-  -d '{
-    "recipient": "255700000000",
-    "code": "123456"
-  }'
+curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "otp_id": "otp_xyz789abc123def",
+  "code": "123456",
+  "developer_app_id": "dev_app_abc123xyz789"
+}'
 ```
 
-<Note>
-  Need to resend? See: [Requesting Codes](/guides/otp-requesting-codes)
-</Note>
+## Request Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `otp_id` | string | Yes | OTP ID from the original OTP request |
+| `code` | string | Yes | OTP code entered by the user |
+| `developer_app_id` | string | Yes | Same developer app ID used for requesting the OTP |
+
+## Response Format
+
+**Valid Code:**
+```json
+{
+  "success": true,
+  "otp_id": "otp_xyz789abc123def",
+  "verified": true,
+  "message": "OTP verified successfully",
+  "verified_at": "2024-08-10T10:32:00Z"
+}
+```
+
+**Invalid Code:**
+```json
+{
+  "success": false,
+  "otp_id": "otp_xyz789abc123def",
+  "verified": false,
+  "error": "Invalid or expired OTP code"
+}
+```
+
+**Expired Code:**
+```json
+{
+  "success": false,
+  "otp_id": "otp_xyz789abc123def",
+  "verified": false,
+  "error": "OTP code has expired"
+}
+```
+
+## Best Practices
+
+### Code Validation
+- Validate that the code contains only digits
+- Check code length before sending to API
+- Trim whitespace from user input
+- Handle case where user includes spaces in code
+
+### Error Handling
+- Check both `success` and `verified` fields in response
+- Provide clear error messages to users
+- Implement rate limiting to prevent brute force attacks
+- Log verification attempts for security monitoring
+
+### Security Considerations
+- Store OTP IDs securely (session storage, encrypted database)
+- Don't expose OTP IDs in client-side logs
+- Implement maximum verification attempts
+- Clear OTP data after successful verification
+
+### User Experience
+- Show clear error messages for invalid codes
+- Provide option to request new OTP if expired
+- Display remaining time for code expiration
+- Allow users to resend OTP after reasonable delay
+
+## Error Handling
+
+Common error codes and how to handle them:
+
+| Error Code | Description | Recommended Action |
+|------------|-------------|-------------------|
+| `INVALID_CODE` | Code doesn't match | Allow retry, show attempts remaining |
+| `OTP_EXPIRED` | Code has expired | Offer to send new code |
+| `MAX_ATTEMPTS_EXCEEDED` | Too many failed attempts | Lock user out, require new OTP request |
+| `OTP_NOT_FOUND` | Invalid request ID | Handle as invalid request |
+| `ALREADY_VALIDATED` | Code already used | Treat as invalid attempt |
+

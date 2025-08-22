@@ -1,0 +1,499 @@
+---
+title: Developer Apps  
+description: Create and manage developer applications for accessing OTP services and advanced integrations with Briq's SMS platform.
+icon: 'code'
+---
+
+# Developer Apps
+
+Developer Apps provide access to advanced Briq features, particularly OTP services. They act as secure integrations that can be linked to workspaces with developer access enabled.
+
+## What are Developer Apps?
+
+Developer Apps are client applications that enable access to OTP services and other developer-restricted features in the Briq platform. Currently, they are primarily used for OTP authentication flows.
+
+### Key Characteristics
+- **OTP Access**: Required for all OTP request and verification operations
+- **Workspace Linking**: Must be linked to workspaces with developer access enabled
+- **Secure Integration**: Provide controlled access to advanced features
+- **Simple Management**: Easy creation and configuration
+
+## Requirements for Developer Apps
+
+### Workspace Access
+- Developer apps can only work with workspaces that have `developer_access = true`
+- You must enable developer access on your workspace before linking apps
+
+### OTP Services  
+- All OTP operations require a valid developer app ID
+- OTP requests and verifications must include the developer app ID
+
+## Managing Developer Apps
+
+### Creating a Developer App
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/developer-apps/create/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "My Authentication App",
+  "description": "Developer app for OTP authentication services",
+  "workspace_id": "ws_abc123xyz789def"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "developer_app_id": "dev_app_xyz789abc123",
+  "name": "My Authentication App",
+  "description": "Developer app for OTP authentication services", 
+  "workspace_id": "ws_abc123xyz789def",
+  "created_at": "2024-08-10T10:30:00Z"
+}
+```
+
+### Listing Developer Apps
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/developer-apps/all/ \
+-H "X-API-Key: your_api_key_here"
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "developer_apps": [
+    {
+      "developer_app_id": "dev_app_xyz789abc123",
+      "name": "My Authentication App",
+      "description": "Developer app for OTP authentication services",
+      "workspace_id": "ws_abc123xyz789def", 
+      "created_at": "2024-08-10T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Getting Developer App Details
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/developer-apps/dev_app_xyz789abc123 \
+-H "X-API-Key: your_api_key_here"
+```
+
+### Updating a Developer App
+
+```bash
+curl -X PATCH https://karibu.briq.tz/v1/developer-apps/update/dev_app_xyz789abc123 \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "Updated Authentication App",
+  "description": "Updated developer app for enhanced OTP services"
+}'
+```
+
+## Using Developer Apps with OTP
+
+### OTP Request with Developer App
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/request/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "phone_number": "255712345678",
+  "developer_app_id": "dev_app_xyz789abc123"
+}'
+```
+
+### OTP Verification with Developer App
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "otp_id": "otp_abc123xyz789",
+  "code": "123456",
+  "developer_app_id": "dev_app_xyz789abc123"
+}'
+```
+
+## Code Examples
+
+### JavaScript/Node.js
+
+```javascript
+const axios = require('axios');
+
+class BriqDeveloperApps {
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+    this.baseURL = 'https://karibu.briq.tz';
+    this.headers = {
+      'X-API-Key': apiKey,
+      'Content-Type': 'application/json'
+    };
+  }
+
+  async createDeveloperApp(name, description, workspaceId) {
+    try {
+      const response = await axios.post(`${this.baseURL}/v1/developer-apps/create/`, {
+        name: name,
+        description: description,
+        workspace_id: workspaceId
+      }, { headers: this.headers });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error creating developer app:', error.response?.data);
+      throw error;
+    }
+  }
+
+  async getAllDeveloperApps() {
+    try {
+      const response = await axios.get(`${this.baseURL}/v1/developer-apps/all/`, {
+        headers: { 'X-API-Key': this.apiKey }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching developer apps:', error.response?.data);
+      throw error;
+    }
+  }
+
+  async getDeveloperApp(appId) {
+    try {
+      const response = await axios.get(`${this.baseURL}/v1/developer-apps/${appId}`, {
+        headers: { 'X-API-Key': this.apiKey }
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching developer app:', error.response?.data);
+      throw error;
+    }
+  }
+
+  async updateDeveloperApp(appId, updates) {
+    try {
+      const response = await axios.patch(`${this.baseURL}/v1/developer-apps/update/${appId}`, updates, {
+        headers: this.headers
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error updating developer app:', error.response?.data);
+      throw error;
+    }
+  }
+}
+
+// OTP Service that uses Developer Apps
+class BriqOTPService {
+  constructor(apiKey, developerAppId) {
+    this.apiKey = apiKey;
+    this.developerAppId = developerAppId;
+    this.baseURL = 'https://karibu.briq.tz';
+    this.headers = {
+      'X-API-Key': apiKey,
+      'Content-Type': 'application/json'
+    };
+  }
+
+  async requestOTP(phoneNumber) {
+    try {
+      const response = await axios.post(`${this.baseURL}/v1/otp/request/`, {
+        phone_number: phoneNumber,
+        developer_app_id: this.developerAppId
+      }, { headers: this.headers });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error requesting OTP:', error.response?.data);
+      throw error;
+    }
+  }
+
+  async verifyOTP(otpId, code) {
+    try {
+      const response = await axios.post(`${this.baseURL}/v1/otp/verify/`, {
+        otp_id: otpId,
+        code: code,
+        developer_app_id: this.developerAppId
+      }, { headers: this.headers });
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error verifying OTP:', error.response?.data);
+      throw error;
+    }
+  }
+}
+
+// Complete setup example
+async function setupOTPService() {
+  const apiKey = 'your_api_key_here';
+  const workspaceId = 'ws_abc123xyz789def';
+  
+  // Step 1: Create developer app
+  const devApps = new BriqDeveloperApps(apiKey);
+  
+  try {
+    const app = await devApps.createDeveloperApp(
+      'My OTP Service',
+      'Developer app for user authentication OTP',
+      workspaceId
+    );
+    
+    console.log('Developer app created:', app);
+    
+    // Step 2: Use the developer app for OTP services
+    const otpService = new BriqOTPService(apiKey, app.developer_app_id);
+    
+    // Step 3: Request OTP
+    const otpRequest = await otpService.requestOTP('255712345678');
+    console.log('OTP requested:', otpRequest);
+    
+    // Step 4: Verify OTP (user would provide the code)
+    const verification = await otpService.verifyOTP(otpRequest.otp_id, '123456');
+    console.log('OTP verification:', verification);
+    
+  } catch (error) {
+    console.error('Setup failed:', error);
+  }
+}
+
+setupOTPService();
+```
+
+### Python
+
+```python
+import requests
+
+class BriqDeveloperApps:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = 'https://karibu.briq.tz'
+        self.headers = {
+            'X-API-Key': api_key,
+            'Content-Type': 'application/json'
+        }
+    
+    def create_developer_app(self, name, description, workspace_id):
+        """Create a new developer app"""
+        data = {
+            'name': name,
+            'description': description,
+            'workspace_id': workspace_id
+        }
+        
+        response = requests.post(
+            f'{self.base_url}/v1/developer-apps/create/',
+            json=data,
+            headers=self.headers
+        )
+        
+        return response.json()
+    
+    def get_all_developer_apps(self):
+        """Get all developer apps"""
+        response = requests.get(
+            f'{self.base_url}/v1/developer-apps/all/',
+            headers={'X-API-Key': self.api_key}
+        )
+        
+        return response.json()
+    
+    def get_developer_app(self, app_id):
+        """Get specific developer app details"""
+        response = requests.get(
+            f'{self.base_url}/v1/developer-apps/{app_id}',
+            headers={'X-API-Key': self.api_key}
+        )
+        
+        return response.json()
+    
+    def update_developer_app(self, app_id, updates):
+        """Update developer app details"""
+        response = requests.patch(
+            f'{self.base_url}/v1/developer-apps/update/{app_id}',
+            json=updates,
+            headers=self.headers
+        )
+        
+        return response.json()
+
+class BriqOTPService:
+    def __init__(self, api_key, developer_app_id):
+        self.api_key = api_key
+        self.developer_app_id = developer_app_id
+        self.base_url = 'https://karibu.briq.tz'
+        self.headers = {
+            'X-API-Key': api_key,
+            'Content-Type': 'application/json'
+        }
+    
+    def request_otp(self, phone_number):
+        """Request OTP using developer app"""
+        data = {
+            'phone_number': phone_number,
+            'developer_app_id': self.developer_app_id
+        }
+        
+        response = requests.post(
+            f'{self.base_url}/v1/otp/request/',
+            json=data,
+            headers=self.headers
+        )
+        
+        return response.json()
+    
+    def verify_otp(self, otp_id, code):
+        """Verify OTP using developer app"""
+        data = {
+            'otp_id': otp_id,
+            'code': code,
+            'developer_app_id': self.developer_app_id
+        }
+        
+        response = requests.post(
+            f'{self.base_url}/v1/otp/verify/',
+            json=data,
+            headers=self.headers
+        )
+        
+        return response.json()
+
+# Complete setup example
+def setup_otp_authentication():
+    api_key = 'your_api_key_here'
+    workspace_id = 'ws_abc123xyz789def'
+    
+    # Step 1: Create developer app
+    dev_apps = BriqDeveloperApps(api_key)
+    
+    try:
+        app = dev_apps.create_developer_app(
+            'User Authentication Service',
+            'Developer app for user login OTP verification',
+            workspace_id
+        )
+        
+        print(f"Developer app created: {app['developer_app_id']}")
+        
+        # Step 2: Initialize OTP service with the new app
+        otp_service = BriqOTPService(api_key, app['developer_app_id'])
+        
+        # Step 3: Test OTP flow
+        phone_number = '255712345678'
+        
+        # Request OTP
+        otp_request = otp_service.request_otp(phone_number)
+        print(f"OTP sent to {phone_number}: {otp_request['otp_id']}")
+        
+        # Simulate user entering code (in real app, get from user input)
+        user_code = input("Enter the OTP code sent to your phone: ")
+        
+        # Verify OTP
+        verification = otp_service.verify_otp(otp_request['otp_id'], user_code)
+        
+        if verification.get('verified'):
+            print("Phone number verified successfully!")
+            return True
+        else:
+            print(f"Verification failed: {verification.get('error')}")
+            return False
+            
+    except Exception as e:
+        print(f"Setup failed: {e}")
+        return False
+
+# Usage
+if __name__ == "__main__":
+    success = setup_otp_authentication()
+    if success:
+        print("OTP authentication setup completed successfully")
+    else:
+        print("Setup failed")
+```
+
+## Best Practices
+
+### Developer App Management
+1. **Descriptive Names**: Use clear names that indicate the app's purpose
+2. **Workspace Linking**: Ensure apps are linked to workspaces with developer access
+3. **Single Purpose**: Create separate apps for different services or environments
+4. **Regular Review**: Periodically review and clean up unused apps
+
+### Security Considerations
+1. **Access Control**: Only create apps when necessary for OTP services
+2. **Monitoring**: Track developer app usage and access patterns
+3. **Documentation**: Keep records of what each app is used for
+4. **Environment Separation**: Use different apps for development and production
+
+### Integration Tips
+1. **Error Handling**: Implement robust error handling for app creation and OTP calls
+2. **ID Storage**: Securely store and manage developer app IDs
+3. **Testing**: Test developer app functionality in development environments
+4. **Logging**: Log developer app activities for debugging and monitoring
+
+## Common Use Cases
+
+### User Authentication
+```python
+# Create app for user authentication
+app = dev_apps.create_developer_app(
+    'User Auth Service',
+    'OTP verification for user logins',
+    workspace_id
+)
+
+# Use for login verification
+otp_service = BriqOTPService(api_key, app['developer_app_id'])
+```
+
+### Registration Verification  
+```javascript
+// Create app for user registration
+const registrationApp = await devApps.createDeveloperApp(
+  'Registration Service',
+  'Phone verification during user signup',
+  workspaceId
+);
+
+// Use for registration OTP
+const otpService = new BriqOTPService(apiKey, registrationApp.developer_app_id);
+```
+
+### Password Reset
+```python
+# Create app for password reset
+reset_app = dev_apps.create_developer_app(
+    'Password Reset Service',
+    'OTP verification for password reset',
+    workspace_id
+)
+
+# Use for password reset verification
+otp_service = BriqOTPService(api_key, reset_app['developer_app_id'])
+```
+
+## Next Steps
+
+- **Workspace Setup**: Ensure your [workspace has developer access](/guides/workspaces) enabled
+- **OTP Integration**: Learn how to [implement OTP authentication](/guides/otp) using your developer apps
+- **Testing**: Test your developer app integrations in a development environment
+- **Production Deployment**: Deploy your developer apps to production with proper security measures
+
+---
+
+*For detailed API reference, visit [Developer Apps API](/Karibu-Developer-Apps)*
