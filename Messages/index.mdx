@@ -3,13 +3,189 @@
 Welcome to the Karibu Messages API documentation.
 
 ## Overview
+The Messages API allows you to send instant and campaign messages, view logs, and retrieve message history. All endpoints require authentication via an `X-API-Key` header.
 
-Describe the messaging features here.
+---
+
+## Security Notes
+- All endpoints require a valid `X-API-Key`.
+- Some actions require the workspace or campaign to have developer access.
+- If access is denied, endpoints will return a `403 Forbidden` error.
+
+**Example Error Response:**
+```json
+{
+  "detail": "Access denied."
+}
+```
+
+---
 
 ## Endpoints
 
-- Send message
-- List messages
-- Message status
+### Send Instant Message
+**POST** `/v1/message/send-instant`
+Send an instant message to one or multiple recipients.
 
-...add details for each endpoint...
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Request Body:**
+```json
+{
+  "content": "Ping from Briq",
+  "recipients": ["255788344348"],
+  "sender_id": "string",
+  "campaign_id": "string",
+  "groups": ["group_id"]
+}
+```
+
+**Response:**
+```json
+null
+```
+
+---
+
+### Send Campaign Message
+**POST** `/v1/message/send-campaign`
+Send a message to all contacts in a campaign.
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Request Body:**
+```json
+{
+  "campaign_id": "string",
+  "group_id": "string",
+  "content": "Campaign message from Briq",
+  "sender_id": "string",
+  "start_date": "date-time",
+  "end_date": "date-time",
+  "frequency": "once"
+}
+```
+
+**Response:**
+```json
+null
+```
+
+---
+
+### Get Message Logs
+**GET** `/v1/message/logs`
+Fetch all message logs for the authenticated user.
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Response:**
+```json
+{
+  "user_id": "string",
+  "logs": [{}]
+}
+```
+
+---
+
+### Get User Messages
+**GET** `/v1/message/history`
+Retrieve all messages sent by the authenticated user.
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Response:**
+```json
+[
+  {
+    "message_id": "string",
+    "user_id": "string",
+    "recipient": "string",
+    "campaign_id": "string",
+    "channel_id": "string",
+    "sender_id": "string",
+    "content": "string",
+    "status": "pending",
+    "sent_at": "date-time"
+  }
+]
+```
+
+---
+
+### Get Messages By Recipient
+**GET** `/v1/message/history/recipient/{recipient}`
+Retrieve all messages sent to a specific recipient.
+
+**Path Parameters:**
+- `recipient` (string, required)
+
+**Response:**
+```json
+[
+  {
+    "message_id": "string",
+    "user_id": "string",
+    "recipient": "string",
+    "campaign_id": "string",
+    "channel_id": "string",
+    "sender_id": "string",
+    "content": "string",
+    "status": "pending",
+    "sent_at": "date-time"
+  }
+]
+```
+
+---
+
+### Get Message Detail
+**GET** `/v1/message/message-log/{message_id}`
+Retrieve details of a specific message.
+
+**Path Parameters:**
+- `message_id` (string, required)
+
+**Response:**
+```json
+{
+  "message_id": "string",
+  "user_id": "string",
+  "recipient": "string",
+  "campaign_id": "string",
+  "channel_id": "string",
+  "sender_id": "string",
+  "content": "string",
+  "status": "pending",
+  "sent_at": "date-time"
+}
+```
+
+---
+
+### Example Error Responses
+
+**403 Forbidden (Access Denied):**
+```json
+{
+  "detail": "Access denied."
+}
+```
+
+**422 Validation Error:**
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "content"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
+}
+```

@@ -3,14 +3,231 @@
 Welcome to the Karibu Developer Apps API documentation.
 
 ## Overview
+The Developer Apps API allows you to register, list, update, and delete developer apps. All endpoints require authentication via an `X-API-Key` header.
 
-Describe developer app features here.
+---
+
+## Security Notes
+- All endpoints require a valid `X-API-Key`.
+- Some actions require the app to belong to a workspace owned by the user.
+- If access is denied, endpoints will return a `403 Forbidden` error.
+
+**Example Error Response:**
+```json
+{
+  "detail": "Access denied."
+}
+```
+
+---
 
 ## Endpoints
 
-- List apps
-- Register app
-- Update app
-- Delete app
+### Register Developer App
+**POST** `/v1/developer_apps/`
+Create a new developer app (optionally in a workspace owned by the user).
 
-...add details for each endpoint...
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Request Body:**
+```json
+{
+  "app_name": "My App",
+  "app_description": "A description of my app.",
+  "workspace_id": "uuid"
+}
+```
+
+**Response:**
+```json
+{
+  "app_id": "string",
+  "app_name": "string",
+  "app_description": "string",
+  "app_key": "string",
+  "user_id": "string",
+  "workspace_id": "string",
+  "created_at": "date-time",
+  "updated_at": "date-time"
+}
+```
+
+---
+
+### List Developer Apps
+**GET** `/v1/developer_apps/all`
+List all developer apps for the authenticated user.
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Response:**
+```json
+[
+  {
+    "app_id": "string",
+    "app_name": "string",
+    "app_description": "string",
+    "app_key": "string",
+    "user_id": "string",
+    "workspace_id": "string",
+    "created_at": "date-time",
+    "updated_at": "date-time"
+  }
+]
+```
+
+---
+
+### Get Developer App
+**GET** `/v1/developer_apps/{app_id}`
+Get a developer app by its ID.
+
+**Path Parameters:**
+- `app_id` (string, required)
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Response:**
+```json
+{
+  "app_id": "string",
+  "app_name": "string",
+  "app_description": "string",
+  "app_key": "string",
+  "user_id": "string",
+  "workspace_id": "string",
+  "created_at": "date-time",
+  "updated_at": "date-time"
+}
+```
+
+---
+
+### Get Developer App By Key
+**GET** `/v1/developer_apps/get-by-key/{app_key}`
+Get a developer app by its app_key.
+
+**Path Parameters:**
+- `app_key` (string, required)
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Response:**
+```json
+{
+  "app_id": "string",
+  "app_name": "string",
+  "app_description": "string",
+  "app_key": "string",
+  "user_id": "string",
+  "workspace_id": "string",
+  "created_at": "date-time",
+  "updated_at": "date-time"
+}
+```
+
+---
+
+### List Workspace Developer Apps
+**GET** `/v1/developer_apps/workspaces/{workspace_id}`
+List all developer apps for a workspace (owned by the user).
+
+**Path Parameters:**
+- `workspace_id` (string, required)
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Response:**
+```json
+[
+  {
+    "app_id": "string",
+    "app_name": "string",
+    "app_description": "string",
+    "app_key": "string",
+    "user_id": "string",
+    "workspace_id": "string",
+    "created_at": "date-time",
+    "updated_at": "date-time"
+  }
+]
+```
+
+---
+
+### Update Developer App
+**PATCH** `/v1/developer_apps/update/{app_id}`
+Update a developer app.
+
+**Path Parameters:**
+- `app_id` (string, required)
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Request Body:**
+```json
+{
+  "app_name": "Updated App Name",
+  "app_description": "Updated description.",
+  "workspace_id": "uuid"
+}
+```
+
+**Response:**
+```json
+{
+  "app_id": "string",
+  "app_name": "string",
+  "app_description": "string",
+  "app_key": "string",
+  "user_id": "string",
+  "workspace_id": "string",
+  "created_at": "date-time",
+  "updated_at": "date-time"
+}
+```
+
+---
+
+### Delete Developer App
+**DELETE** `/v1/developer_apps/purge/{app_id}`
+Delete a developer app.
+
+**Path Parameters:**
+- `app_id` (string, required)
+
+**Headers:**
+- `X-API-Key` (string, required)
+
+**Response:**
+204 No Content
+
+---
+
+### Example Error Responses
+
+**403 Forbidden (Access Denied):**
+```json
+{
+  "detail": "Access denied."
+}
+```
+
+**422 Validation Error:**
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "app_name"],
+      "msg": "field required",
+      "type": "value_error.missing"
+    }
+  ]
+}
+```
