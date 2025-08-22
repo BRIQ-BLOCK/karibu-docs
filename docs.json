@@ -50,6 +50,10 @@
         "tab": "API reference",
         "groups": [
           {
+            "group": "API Routes",
+            "openapi": "openapi.json"
+          },
+          {
             "group": "Health & Version",
             "pages": [
               "Karibu-Health/index"
@@ -58,7 +62,11 @@
           {
             "group": "Workspaces",
             "pages": [
-              "Karibu-Workspace/index"
+              "Karibu-Workspace/index",
+              "Karibu-Workspace/endpoints/create-workspace",
+              "Karibu-Workspace/endpoints/list-workspaces",
+              "Karibu-Workspace/endpoints/get-workspace",
+              "Karibu-Workspace/endpoints/update-workspace"
             ]
           },
           {
@@ -123,6 +131,33 @@
       "x": "https://x.com/karibubriq",
       "github": "https://github.com/briq-block",
       "linkedin": "https://linkedin.com/company/briq-solutions-inc"
+    }
+  },
+  "openapi": [
+    "openapi.json"
+  ],
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "python",
+        "javascript"
+      ],
+      "defaults": "required"
+    },
+    "mdx": {
+      "server": [
+        "https://api.example.com",
+        "https://staging-api.example.com"
+      ],
+      "auth": {
+        "method": "key",
+        "name": "X-API-Key",
+        "placeholder": "sk_live_************************"
+      }
     }
   }
 }
