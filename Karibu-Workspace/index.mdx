@@ -38,49 +38,36 @@ Interactive playgrounds are enabled globally in `docs.json`:
 
 You can also override playground settings per-page using frontmatter fields such as `playground: 'interactive'`.
 
-### Notes and best practices
+---
 
-- Workspace IDs are UUIDs. Use them to scope calls and resources.
-- Developer access is a per-workspace setting; enabling it allows creation of API clients (Developer Apps) scoped to that workspace.
-- Always rotate and protect API keys. Keys grant access to all workspaces for the authenticated user.
+### Create Workspace
 
-If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.
+Endpoint
+POST /v1/workspace/
 
-Response 200:
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
 ```json
-{ "workspace_id":"uuid", "user_id":"uuid", "name":"string", "description":"string", "created_at":"iso", "developer_access":true }
+{
+  "name": "string",
+  "description": "string",
+  "developer_access": true
+}
 ```
 
-### List Workspaces
-GET /v1/workspace/all/
-Headers: X-API-Key
-Response 200: array of workspace objects (same shape as above)
-Errors: 401 / 422
-
-### Get Workspace
-GET /v1/workspace/{workspace_id}
-Headers: X-API-Key
-Path: workspace_id (UUID)
-Response 200: single workspace object
-Errors: 404 / 422
-
-### Update Workspace
-PUT /v1/workspace/{workspace_id}
-Headers: X-API-Key
-Request:
+Response — 201 Created
 ```json
-{ "name":"string", "description":"string", "developer_access":true }
+{
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "name": "string",
+  "description": "string",
+  "created_at": "2019-08-24T14:15:22Z",
+  "developer_access": true
+}
 ```
-Response 200: updated workspace object
-Errors: 422 — 
-```json{ "detail":[{ "msg":"Invalid update request" }] }
-```
-- Workspace IDs are UUIDs and scope resources.
-- Developer access enables creating Developer Apps for the workspace.
-- Rotate and protect API keys; they grant access to all user workspaces.
-
-If you want SDK examples for a specific language, request the language and code samples will be added.
-
 
 ---
 
@@ -184,6 +171,18 @@ Response — 422 Validation Error
 {
   "detail": [ { "msg": "Invalid update request" } ]
 }
+```
+
+---
+
+### Notes and best practices
+
+- Workspace IDs are UUIDs. Use them to scope calls and resources.
+- Developer access is a per-workspace setting; enabling it allows creation of API clients (Developer Apps) scoped to that workspace.
+- Always rotate and protect API keys. Keys grant access to all workspaces for the authenticated user.
+
+If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.
+
 ```
 
 ---
