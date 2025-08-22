@@ -1,50 +1,47 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Karibu Docs",
   "colors": {
     "primary": "#003d4a",
     "light": "#fddf0d",
     "dark": "#fddf0d"
   },
-  "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Overview",
             "pages": [
               "index",
-              "signup"
-             
+              "signup",
+              "quickstart",
+              "security-notes",
+              "error-handling",
+              "best-practices"
             ]
           },
           {
-            "group": "SMS APIs",
+            "group": "Working Environment",
             "pages": [
-              "SMS/overview",
-              "SMS/InstantSMS",
-              "SMS/campaigns",
-              "SMS/workspaces"  
+              "guides/workspaces",
+              "guides/developer-apps"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Messaging",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "guides/messaging",
+              "guides/campaigns"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "OTP",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "guides/otp-requesting-codes",
+              "guides/otp-validating-codes"
             ]
           }
         ]
@@ -53,24 +50,12 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
+            "group": "API Routes",
+            "openapi": "openapi.json"
           }
         ]
       }
     ]
-  
   },
   "logo": {
     "light": "/logo/light.svg",
@@ -91,21 +76,48 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
       "x": "https://x.com/karibubriq",
       "github": "https://github.com/briq-block",
       "linkedin": "https://linkedin.com/company/briq-solutions-inc"
+    }
+  },
+  "openapi": [
+    "openapi.json"
+  ],
+  "api": {
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": [
+        "curl",
+        "python",
+        "javascript"
+      ],
+      "defaults": "required"
+    },
+    "mdx": {
+      "server": [
+        "http://karibu.briq.tz",
+        "https://karibu.briq.tz"
+      ],
+      "auth": {
+        "method": "bearer",
+        "name": "Authorization",
+        "placeholder": "X-API your_api_token_here"
+      }
     }
   }
 }

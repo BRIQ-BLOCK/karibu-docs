@@ -1,0 +1,367 @@
+---
+title: "Karibu Workspace — API Reference"
+description: "API reference for Workspace operations."
+---
+
+## Karibu Workspace — API Reference
+
+A compact technical reference for workspace operations. For conceptual guidance see the Guides: [Workspaces](/guides/workspaces). All endpoints require the X-API-Key header and operate within the authenticated user's scope.
+
+### Common headers
+- X-API-Key (string, required)
+
+## Interactive playgrounds
+
+The interactive API playground pages for workspace endpoints live under the
+`endpoints/` folder. Each page is an MDX endpoint page which Mintlify can render
+as an interactive playground when API settings are configured in `docs.json`.
+
+- [Create Workspace](/Karibu-Workspace/endpoints/create-workspace)
+- [List Workspaces](/Karibu-Workspace/endpoints/list-workspaces)
+- [Get Workspace](/Karibu-Workspace/endpoints/get-workspace)
+- [Update Workspace](/Karibu-Workspace/endpoints/update-workspace)
+
+Interactive playgrounds are enabled globally in `docs.json`:
+
+```json
+{
+  "openapi": ["openapi.json"],
+  "api": {
+    "playground": { "display": "interactive" },
+    "mdx": {
+      "server": ["https://api.example.com", "https://staging-api.example.com"],
+      "auth": { "method": "key", "name": "X-API-Key", "placeholder": "sk_live_************************" }
+    }
+  }
+}
+```
+
+You can also override playground settings per-page using frontmatter fields such as `playground: 'interactive'`.
+
+---
+
+### Create Workspace
+
+Endpoint
+POST /v1/workspace/
+
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
+```json
+{
+  "name": "string",
+  "description": "string",
+  "developer_access": true
+}
+```
+
+Response — 201 Created
+```json
+{
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "name": "string",
+  "description": "string",
+  "created_at": "2019-08-24T14:15:22Z",
+  "developer_access": true
+}
+```
+
+---
+
+### List Workspaces
+
+Endpoint
+GET /v1/workspace/all/
+
+Headers
+- `X-API-Key` (required)
+
+Response — 200 OK
+```json
+[
+  {
+    "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+    "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+    "name": "string",
+    "description": "string",
+    "created_at": "2019-08-24T14:15:22Z",
+    "developer_access": true
+  }
+]
+```
+
+Response — 401 Unauthorized / 422
+```json
+{
+  "detail": [ { "msg": "Unauthorized request" } ]
+}
+```
+
+---
+
+### Get Workspace
+
+Endpoint
+GET /v1/workspace/{workspace_id}
+
+Path parameters
+- `workspace_id` (string, required): Workspace ID (UUID)
+
+Headers
+- `X-API-Key` (required)
+
+Response — 200 OK
+```json
+{
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "name": "string",
+  "description": "string",
+  "created_at": "2019-08-24T14:15:22Z",
+  "developer_access": true
+}
+```
+
+Response — 404 / 422
+```json
+{
+  "detail": [ { "msg": "Workspace not found or unauthorized" } ]
+}
+```
+
+---
+
+### Update Workspace
+
+Endpoint
+PUT /v1/workspace/{workspace_id}
+
+Path parameters
+- `workspace_id` (string, required): Workspace ID (UUID)
+
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
+```json
+{
+  "name": "string",
+  "description": "string",
+  "developer_access": true
+}
+```
+
+Response — 200 OK
+```json
+{
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "name": "string",
+  "description": "string",
+  "created_at": "2019-08-24T14:15:22Z",
+  "developer_access": false
+}
+```
+
+Response — 422 Validation Error
+```json
+{
+  "detail": [ { "msg": "Invalid update request" } ]
+}
+```
+
+---
+
+### Notes and best practices
+
+- Workspace IDs are UUIDs. Use them to scope calls and resources.
+- Developer access is a per-workspace setting; enabling it allows creation of API clients (Developer Apps) scoped to that workspace.
+- Always rotate and protect API keys. Keys grant access to all workspaces for the authenticated user.
+
+If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.
+
+```
+
+---
+
+### Notes and best practices
+
+- Workspace IDs are UUIDs. Use them to scope calls and resources.
+- Developer access is a per-workspace setting; enabling it allows creation of API clients (Developer Apps) scoped to that workspace.
+- Always rotate and protect API keys. Keys grant access to all workspaces for the authenticated user.
+
+If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.
+	
+
+---
+
+### List Workspaces
+
+GET /v1/workspace/all/
+
+Headers
+
+- `X-API-Key` (required)
+
+Response — 200 OK
+
+```json
+[
+	{
+		"workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+		"user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+		"name": "string",
+		"description": "string",
+		"created_at": "2019-08-24T14:15:22Z",
+		"developer_access": true
+	}
+]
+```
+
+Response — 401 Unauthorized / 422
+
+```json
+{
+	"detail": [ { "msg": "Unauthorized request" } ]
+}
+```
+
+---
+
+### Get Workspace
+
+GET /v1/workspace/{workspace_id}
+
+Path parameters
+
+- `workspace_id` (string, required): Workspace ID (UUID)
+
+Headers
+
+- `X-API-Key` (required)
+
+Response — 200 OK
+
+```json
+{
+	"workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+	"user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+	"name": "string",
+	"description": "string",
+	"created_at": "2019-08-24T14:15:22Z",
+	"developer_access": true
+}
+```
+
+Response — 404 / 422
+
+```json
+{
+	"detail": [ { "msg": "Workspace not found or unauthorized" } ]
+}
+```
+
+---
+
+### Update Workspace
+
+PUT /v1/workspace/{workspace_id}
+
+Request body (application/json)
+
+```json
+{
+	"name": "string",
+	"description": "string",
+	"developer_access": true
+}
+```
+
+Response — 200 OK
+
+```json
+{
+	"workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+	"user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+	"name": "string",
+	"description": "string",
+	"created_at": "2019-08-24T14:15:22Z",
+	"developer_access": false
+}
+```
+
+Response — 422 Validation Error
+
+```json
+{
+	"detail": [ { "msg": "Invalid update request" } ]
+}
+```
+
+---
+
+### Notes and best practices
+
+- Workspace IDs are UUIDs. Use them to scope calls and resources.
+- Developer access is a per-workspace setting; enabling it allows creation of API clients (Developer Apps) scoped to that workspace.
+- Always rotate and protect API keys. Keys grant access to all workspaces for the authenticated user.
+
+If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.
+
+Response — 404 / 422
+
+```json
+{
+	"detail": [ { "msg": "Workspace not found or unauthorized" } ]
+}
+```
+
+---
+
+### Update Workspace
+
+PUT /v1/workspace/{workspace_id}
+
+Request body (application/json)
+
+```json
+{
+	"name": "string",
+	"description": "string",
+	"developer_access": true
+}
+```
+
+Response — 200 OK
+
+```json
+{
+	"workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+	"user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+	"name": "string",
+	"description": "string",
+	"created_at": "2019-08-24T14:15:22Z",
+	"developer_access": false
+}
+```
+
+Response — 422 Validation Error
+
+```json
+{
+	"detail": [ { "msg": "Invalid update request" } ]
+}
+```
+
+---
+
+### Notes and best practices
+
+- Workspace IDs are UUIDs. Use them to scope calls and resources.
+- Developer access is a per-workspace setting; enabling it allows creation of API clients (Developer Apps) scoped to that workspace.
+- Always rotate and protect API keys. Keys grant access to all workspaces for the authenticated user.
+
+If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.

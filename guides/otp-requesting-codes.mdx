@@ -1,0 +1,79 @@
+---
+title: Requesting OTP Codes
+description: Learn how to request one-time password codes for user verification using developer apps in the Briq platform.
+icon: 'paper-plane'
+---
+
+# Requesting OTP Codes
+
+This guide covers how to request OTP codes using the Briq v0.7 API. OTP requests require a developer app and must be made to workspaces with developer access enabled.
+
+## Prerequisites
+
+Before requesting OTP codes, ensure you have:
+1. A workspace with `developer_access = true`
+2. A developer app linked to that workspace
+3. Your API key for authentication
+
+## Quick Start
+
+Request an OTP code for user verification:
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/request/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "phone_number": "255712345678",
+  "developer_app_id": "dev_app_abc123xyz789"
+}'
+```
+
+## Request Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `phone_number` | string | Yes | Phone number in international format (e.g., 255712345678) |
+| `developer_app_id` | string | Yes | ID of the developer app for OTP access |
+
+## Response Format
+
+**Successful Request:**
+```json
+{
+  "success": true,
+  "otp_id": "otp_xyz789abc123def",
+  "phone_number": "255712345678",
+  "message": "Your verification code is 123456",
+  "sent_at": "2024-08-10T10:30:00Z",
+  "expires_at": "2024-08-10T10:35:00Z"
+}
+```
+
+**Failed Request:**
+```json
+{
+  "success": false,
+  "error": "Developer app not found or not linked to workspace with developer access"
+}
+```
+
+## Best Practices
+
+### Phone Number Format
+- Always use international format without spaces or special characters
+- Include country code (e.g., 255 for Tanzania)
+- Example: `255712345678` (not `+255 71 234 5678`)
+
+### Error Handling
+- Check the `success` field in the response
+- Handle developer app authentication errors
+- Implement retry logic for network failures
+- Log OTP request attempts for monitoring
+
+### Security Considerations
+- Store `otp_id` securely for verification step
+- Don't expose OTP IDs in logs or client-side code
+- Implement rate limiting on your application side
+- Validate phone numbers before making requests
+

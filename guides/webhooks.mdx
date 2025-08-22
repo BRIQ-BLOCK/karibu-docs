@@ -1,0 +1,636 @@
+---
+title: Webhooks & Callbacks
+description: Configure webhooks to receive real-time delivery status updates, message events, and system notifications from the Briq platform.
+icon: 'webhook'
+---
+
+# Webhooks & Callbacks
+
+Webhooks provide real-time notifications about message delivery status, campaign events, and other important activities in your Briq account. Instead of continuously polling our API for updates, webhooks push information to your application as events occur.
+
+## What are Webhooks?
+
+Webhooks are HTTP POST requests sent to your application when specific events occur in your Briq account. They provide immediate notification of:
+
+- **Message Delivery Status**: Delivered, failed, expired notifications
+- **Campaign Events**: Campaign started, completed, paused
+- **OTP Events**: OTP requested, validated, expired
+- **Account Events**: Low balance alerts, quota warnings
+- **Error Notifications**: API errors, delivery failures
+
+## Webhook Configuration
+
+### Setting Up Webhooks
+
+Configure webhooks at the workspace level:
+
+```bash
+curl -X PATCH https://karibu.briq.tz/v1/workspace/update/ws_abc123xyz789def \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "settings": {
+    "webhook_url": "https://yourapp.com/webhooks/briq",
+    "webhook_events": [
+      "message.delivered",
+      "message.failed",
+      "campaign.completed",
+      "otp.validated",
+      "account.low_balance"
+    ],
+    "webhook_secret": "your_secret_key_for_verification"
+  }
+}'
+```
+
+### Webhook Event Types
+
+| Event Type | Description |
+|------------|-------------|
+| `message.sent` | Message successfully sent to carrier |
+| `message.delivered` | Message delivered to recipient |
+| `message.failed` | Message delivery failed |
+| `message.expired` | Message expired before delivery |
+| `campaign.started` | Campaign execution started |
+| `campaign.completed` | Campaign finished sending |
+| `campaign.paused` | Campaign paused by user or system |
+| `otp.requested` | OTP code requested |
+| `otp.validated` | OTP code successfully validated |
+| `otp.expired` | OTP code expired |
+| `account.low_balance` | Account balance below threshold |
+| `account.quota_warning` | Approaching usage quota limits |
+
+## Webhook Payload Format
+
+### Message Delivery Event
+```json
+{
+  "event": "message.delivered",
+  "timestamp": "2024-08-10T10:32:15Z",
+  "webhook_id": "wh_abc123xyz789def",
+  "data": {
+    "message_id": "msg_abc123xyz789",
+    "recipient": "255712345678",
+    "status": "delivered",
+    "delivered_at": "2024-08-10T10:32:15Z",
+    "cost": 50,
+    "sender_id": "BRIQ",
+    "message_text": "Your order has been confirmed!",
+    "workspace_id": "ws_abc123xyz789def",
+    "campaign_id": "camp_def456ghi789jkl"
+  }
+}
+```
+
+### Campaign Event
+```json
+{
+  "event": "campaign.completed",
+  "timestamp": "2024-08-10T15:45:00Z",
+  "webhook_id": "wh_def456ghi789jkl",
+  "data": {
+    "campaign_id": "camp_def456ghi789jkl",
+    "campaign_name": "Summer Sale 2024",
+    "workspace_id": "ws_abc123xyz789def",
+    "status": "completed",
+    "started_at": "2024-08-10T09:00:00Z",
+    "completed_at": "2024-08-10T15:45:00Z",
+    "statistics": {
+      "messages_sent": 5000,
+      "messages_delivered": 4850,
+      "messages_failed": 150,
+      "total_cost": 250000
+    }
+  }
+}
+```
+
+### OTP Event
+```json
+{
+  "event": "otp.validated",
+  "timestamp": "2024-08-10T10:32:15Z",
+  "webhook_id": "wh_ghi789jkl012mno",
+  "data": {
+    "request_id": "otp_abc123xyz789def",
+    "recipient": "255712345678",
+    "purpose": "login_verification",
+    "validated_at": "2024-08-10T10:32:15Z",
+    "attempts_used": 1,
+    "workspace_id": "ws_abc123xyz789def"
+  }
+}
+```
+
+## Implementing Webhook Handlers
+
+### Node.js/Express Handler
+```javascript
+const express = require('express');
+const crypto = require('crypto');
+const app = express();
+
+app.use(express.json());
+
+// Webhook verification middleware
+function verifyWebhookSignature(req, res, next) {
+  const signature = req.headers['x-briq-signature'];
+  const payload = JSON.stringify(req.body);
+  const webhookSecret = process.env.BRIQ_WEBHOOK_SECRET;
+  
+  if (!signature || !webhookSecret) {
+    return res.status(401).json({ error: 'Missing signature or secret' });
+  }
+  
+  const expectedSignature = crypto
+    .createHmac('sha256', webhookSecret)
+    .update(payload)
+    .digest('hex');
+    
+  const providedSignature = signature.replace('sha256=', '');
+  
+  if (crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(providedSignature))) {
+    next();
+  } else {
+    res.status(401).json({ error: 'Invalid signature' });
+  }
+}
+
+// Webhook endpoint
+app.post('/webhooks/briq', verifyWebhookSignature, (req, res) => {
+  const { event, data, timestamp } = req.body;
+  
+  console.log(`Received webhook: ${event} at ${timestamp}`);
+  
+  switch (event) {
+    case 'message.delivered':
+      handleMessageDelivered(data);
+      break;
+      
+    case 'message.failed':
+      handleMessageFailed(data);
+      break;
+      
+    case 'campaign.completed':
+      handleCampaignCompleted(data);
+      break;
+      
+    case 'otp.validated':
+      handleOTPValidated(data);
+      break;
+      
+    case 'account.low_balance':
+      handleLowBalance(data);
+      break;
+      
+    default:
+      console.log(`Unhandled event type: ${event}`);
+  }
+  
+  // Always respond with 200 OK to acknowledge receipt
+  res.status(200).json({ received: true });
+});
+
+function handleMessageDelivered(data) {
+  console.log(`Message ${data.message_id} delivered to ${data.recipient}`);
+  
+  // Update your database
+  updateMessageStatus(data.message_id, 'delivered', data.delivered_at);
+  
+  // Trigger any follow-up actions
+  if (data.campaign_id) {
+    trackCampaignDelivery(data.campaign_id, data.recipient);
+  }
+}
+
+function handleMessageFailed(data) {
+  console.log(`Message ${data.message_id} failed: ${data.failure_reason}`);
+  
+  // Update database
+  updateMessageStatus(data.message_id, 'failed', null, data.failure_reason);
+  
+  // Implement retry logic if appropriate
+  if (data.failure_reason === 'temporary_failure') {
+    scheduleRetry(data.message_id);
+  }
+}
+
+function handleCampaignCompleted(data) {
+  console.log(`Campaign ${data.campaign_name} completed`);
+  
+  // Update campaign status
+  updateCampaignStatus(data.campaign_id, 'completed', data.statistics);
+  
+  // Send notification to campaign manager
+  notifyCampaignManager(data.campaign_id, data.statistics);
+  
+  // Generate campaign report
+  generateCampaignReport(data.campaign_id);
+}
+
+function handleOTPValidated(data) {
+  console.log(`OTP validated for ${data.recipient}`);
+  
+  // Complete user authentication flow
+  completeAuthentication(data.recipient, data.request_id);
+}
+
+function handleLowBalance(data) {
+  console.log(`Low balance alert: ${data.current_balance}`);
+  
+  // Send alert to administrators
+  alertAdministrators('low_balance', data);
+  
+  // Optionally trigger automatic top-up
+  if (data.current_balance < data.critical_threshold) {
+    triggerAutoTopUp();
+  }
+}
+
+app.listen(3000, () => {
+  console.log('Webhook server listening on port 3000');
+});
+```
+
+### Python Flask Handler
+```python
+import hmac
+import hashlib
+import json
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+def verify_webhook_signature(payload, signature, secret):
+    """Verify webhook signature for security."""
+    if not signature or not secret:
+        return False
+    
+    # Remove 'sha256=' prefix if present
+    if signature.startswith('sha256='):
+        signature = signature[7:]
+    
+    # Calculate expected signature
+    expected_signature = hmac.new(
+        secret.encode('utf-8'),
+        payload.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+    
+    # Use constant time comparison
+    return hmac.compare_digest(expected_signature, signature)
+
+@app.route('/webhooks/briq', methods=['POST'])
+def handle_webhook():
+    # Get signature from headers
+    signature = request.headers.get('X-Briq-Signature')
+    webhook_secret = 'your_webhook_secret_here'
+    
+    # Verify signature
+    payload = request.get_data(as_text=True)
+    if not verify_webhook_signature(payload, signature, webhook_secret):
+        return jsonify({'error': 'Invalid signature'}), 401
+    
+    # Parse webhook data
+    try:
+        webhook_data = request.get_json()
+        event = webhook_data['event']
+        data = webhook_data['data']
+        timestamp = webhook_data['timestamp']
+        
+        print(f"Received webhook: {event} at {timestamp}")
+        
+        # Process webhook based on event type
+        if event == 'message.delivered':
+            handle_message_delivered(data)
+        elif event == 'message.failed':
+            handle_message_failed(data)
+        elif event == 'campaign.completed':
+            handle_campaign_completed(data)
+        elif event == 'otp.validated':
+            handle_otp_validated(data)
+        elif event == 'account.low_balance':
+            handle_low_balance(data)
+        else:
+            print(f"Unhandled event type: {event}")
+        
+        return jsonify({'received': True}), 200
+        
+    except Exception as e:
+        print(f"Error processing webhook: {e}")
+        return jsonify({'error': 'Processing failed'}), 500
+
+def handle_message_delivered(data):
+    """Handle message delivery confirmation."""
+    message_id = data['message_id']
+    recipient = data['recipient']
+    delivered_at = data['delivered_at']
+    
+    print(f"Message {message_id} delivered to {recipient}")
+    
+    # Update your database
+    update_message_status(message_id, 'delivered', delivered_at)
+    
+    # Send confirmation email to customer if needed
+    if data.get('campaign_id'):
+        track_campaign_engagement(data['campaign_id'], recipient, 'delivered')
+
+def handle_message_failed(data):
+    """Handle message delivery failure."""
+    message_id = data['message_id']
+    recipient = data['recipient']
+    failure_reason = data.get('failure_reason')
+    
+    print(f"Message {message_id} failed: {failure_reason}")
+    
+    # Update database
+    update_message_status(message_id, 'failed', None, failure_reason)
+    
+    # Implement retry logic for temporary failures
+    if failure_reason == 'temporary_failure':
+        schedule_message_retry(message_id)
+    elif failure_reason == 'invalid_number':
+        flag_invalid_number(recipient)
+
+def handle_campaign_completed(data):
+    """Handle campaign completion."""
+    campaign_id = data['campaign_id']
+    statistics = data['statistics']
+    
+    print(f"Campaign {data['campaign_name']} completed")
+    
+    # Update campaign status in database
+    update_campaign_status(campaign_id, 'completed', statistics)
+    
+    # Generate and send campaign report
+    generate_campaign_report(campaign_id, statistics)
+    
+    # Notify campaign stakeholders
+    notify_campaign_stakeholders(campaign_id, statistics)
+
+def handle_otp_validated(data):
+    """Handle successful OTP validation."""
+    request_id = data['request_id']
+    recipient = data['recipient']
+    
+    print(f"OTP validated for {recipient}")
+    
+    # Complete user authentication
+    complete_user_authentication(recipient, request_id)
+
+def handle_low_balance(data):
+    """Handle low balance alert."""
+    current_balance = data['current_balance']
+    threshold = data['threshold']
+    
+    print(f"Low balance alert: {current_balance}")
+    
+    # Send alert to administrators
+    send_admin_alert('low_balance', {
+        'current_balance': current_balance,
+        'threshold': threshold
+    })
+    
+    # Auto top-up if enabled
+    if current_balance < 10000:  # Critical threshold
+        trigger_auto_topup()
+
+# Helper functions (implement based on your needs)
+def update_message_status(message_id, status, delivered_at=None, failure_reason=None):
+    # Update your database
+    pass
+
+def update_campaign_status(campaign_id, status, statistics):
+    # Update campaign in your database
+    pass
+
+def generate_campaign_report(campaign_id, statistics=None):
+    # Generate and send campaign report
+    pass
+
+def complete_user_authentication(recipient, request_id):
+    # Complete authentication flow
+    pass
+
+def send_admin_alert(alert_type, data):
+    # Send alert to administrators
+    pass
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+```
+
+## Security Best Practices
+
+### Signature Verification
+Always verify webhook signatures to ensure requests are from Briq:
+
+```javascript
+function verifySignature(payload, signature, secret) {
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(payload)
+    .digest('hex');
+    
+  return crypto.timingSafeEqual(
+    Buffer.from(expectedSignature),
+    Buffer.from(signature.replace('sha256=', ''))
+  );
+}
+```
+
+### HTTPS Only
+- Always use HTTPS for webhook URLs
+- Reject HTTP requests in production
+- Use valid SSL certificates
+
+### Idempotency
+Handle duplicate webhook deliveries:
+
+```javascript
+const processedWebhooks = new Set(); // Use Redis in production
+
+app.post('/webhooks/briq', (req, res) => {
+  const webhookId = req.body.webhook_id;
+  
+  if (processedWebhooks.has(webhookId)) {
+    return res.status(200).json({ received: true });
+  }
+  
+  processedWebhooks.add(webhookId);
+  
+  // Process webhook...
+  
+  res.status(200).json({ received: true });
+});
+```
+
+### Rate Limiting
+Implement rate limiting for webhook endpoints:
+
+```javascript
+const rateLimit = require('express-rate-limit');
+
+const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000, // Limit each IP to 1000 requests per windowMs
+  message: 'Too many webhook requests'
+});
+
+app.use('/webhooks', webhookLimiter);
+```
+
+## Webhook Retry Logic
+
+Briq automatically retries failed webhook deliveries:
+
+- **Retry Schedule**: 1min, 5min, 15min, 1hr, 6hr, 24hr
+- **Maximum Attempts**: 6 retries over 48 hours
+- **Success Criteria**: HTTP 200-299 response status
+- **Timeout**: 30-second timeout per request
+
+### Handling Retries in Your Application
+```javascript
+// Track retry attempts
+const retryAttempts = new Map();
+
+app.post('/webhooks/briq', (req, res) => {
+  const webhookId = req.body.webhook_id;
+  const retryCount = parseInt(req.headers['x-briq-retry-count'] || '0');
+  
+  if (retryCount > 0) {
+    console.log(`Webhook retry #${retryCount} for ${webhookId}`);
+  }
+  
+  try {
+    processWebhook(req.body);
+    
+    // Clear retry tracking on success
+    retryAttempts.delete(webhookId);
+    
+    res.status(200).json({ received: true });
+  } catch (error) {
+    console.error(`Webhook processing failed: ${error.message}`);
+    
+    // Return 500 to trigger retry
+    res.status(500).json({ error: 'Processing failed' });
+  }
+});
+```
+
+## Testing Webhooks
+
+### Local Development with ngrok
+```bash
+# Install ngrok
+npm install -g ngrok
+
+# Start your local server
+node webhook-server.js
+
+# In another terminal, expose local server
+ngrok http 3000
+
+# Use the ngrok URL for webhook configuration
+# Example: https://abc123.ngrok.io/webhooks/briq
+```
+
+### Webhook Testing Endpoint
+```javascript
+// Simple webhook test endpoint
+app.post('/webhooks/test', (req, res) => {
+  console.log('Test webhook received:');
+  console.log(JSON.stringify(req.body, null, 2));
+  console.log('Headers:', req.headers);
+  
+  res.status(200).json({ 
+    received: true, 
+    timestamp: new Date().toISOString() 
+  });
+});
+```
+
+## Monitoring and Debugging
+
+### Webhook Analytics
+Track webhook performance and failures:
+
+```javascript
+class WebhookAnalytics {
+  constructor() {
+    this.metrics = {
+      received: 0,
+      processed: 0,
+      failed: 0,
+      responseTime: []
+    };
+  }
+  
+  recordWebhook(event, processingTime, success) {
+    this.metrics.received++;
+    
+    if (success) {
+      this.metrics.processed++;
+    } else {
+      this.metrics.failed++;
+    }
+    
+    this.metrics.responseTime.push(processingTime);
+    
+    // Log to monitoring system
+    console.log(`Webhook ${event}: ${success ? 'SUCCESS' : 'FAILED'} (${processingTime}ms)`);
+  }
+  
+  getStats() {
+    const avgResponseTime = this.metrics.responseTime.length > 0
+      ? this.metrics.responseTime.reduce((a, b) => a + b) / this.metrics.responseTime.length
+      : 0;
+      
+    return {
+      ...this.metrics,
+      successRate: (this.metrics.processed / this.metrics.received) * 100,
+      avgResponseTime: Math.round(avgResponseTime)
+    };
+  }
+}
+```
+
+### Error Logging
+```javascript
+app.post('/webhooks/briq', (req, res) => {
+  const startTime = Date.now();
+  
+  try {
+    processWebhook(req.body);
+    
+    const processingTime = Date.now() - startTime;
+    analytics.recordWebhook(req.body.event, processingTime, true);
+    
+    res.status(200).json({ received: true });
+  } catch (error) {
+    const processingTime = Date.now() - startTime;
+    analytics.recordWebhook(req.body.event, processingTime, false);
+    
+    // Log error details
+    console.error('Webhook processing error:', {
+      event: req.body.event,
+      webhookId: req.body.webhook_id,
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+    
+    res.status(500).json({ error: 'Processing failed' });
+  }
+});
+```
+
+## Next Steps
+
+- **Workspace Configuration**: Learn how to [configure workspace settings](/guides/workspaces)
+- **Message Tracking**: Understand [message delivery tracking](/guides/messaging)
+- **API Reference**: See detailed [Workspace API documentation](/Karibu-Workspace)
+
+---
+
+*Need help setting up webhooks? Contact our integration team at [integrations@briq.tz](mailto:integrations@briq.tz) for assistance.*

@@ -1,0 +1,220 @@
+---
+title: Campaign Messages
+description: Create and manage organized SMS campaigns within workspaces. Learn how to set up campaigns for bulk messaging and organized communication.
+icon: 'bullhorn'
+---
+
+# Campaign Messages
+
+Campaigns provide a way to organize and manage bulk SMS messaging within workspaces. They help you group related messages and track your bulk messaging activities effectively.
+
+## What are Campaigns?
+
+Campaigns are containers within workspaces that help you organize your bulk messaging efforts. Each campaign belongs to a specific workspace and can be used to send messages to multiple recipients.
+
+### Campaign vs Instant Messages
+
+| Feature | Campaign Messages | Instant Messages |
+|---------|------------------|------------------|
+| **Organization** | Grouped under campaigns in workspaces | Individual messages |
+| **Recipients** | Multiple phone numbers | Single phone number |
+| **Management** | Created and tracked within campaigns | Sent directly |
+| **Use Case** | Bulk communications, marketing | Notifications, alerts |
+
+## When to Use Campaigns
+
+### Bulk Communications
+- **Marketing**: Promotional messages to customer lists
+- **Announcements**: Company updates to multiple recipients  
+- **Events**: Invitations and event notifications
+- **Newsletters**: Regular updates to subscriber lists
+
+### Organization Benefits
+- **Project Tracking**: Group messages by initiative or project
+- **Workspace Management**: Keep campaigns organized within workspaces
+- **Bulk Sending**: Send the same message to multiple recipients efficiently
+
+## Managing Campaigns
+
+### Creating a Campaign
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/campaigns/create/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "workspace_id": "ws_abc123xyz789def",
+  "name": "Summer Sale 2024",
+  "description": "Promotional campaign for summer discounts and offers"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "campaign_id": "camp_xyz789abc123def",
+  "workspace_id": "ws_abc123xyz789def",
+  "name": "Summer Sale 2024", 
+  "description": "Promotional campaign for summer discounts and offers",
+  "created_at": "2024-08-10T10:30:00Z"
+}
+```
+
+### Listing All Campaigns
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/campaigns/all/ \
+-H "X-API-Key: your_api_key_here"
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "campaigns": [
+    {
+      "campaign_id": "camp_xyz789abc123def",
+      "workspace_id": "ws_abc123xyz789def",
+      "name": "Summer Sale 2024",
+      "description": "Promotional campaign for summer discounts and offers",
+      "created_at": "2024-08-10T10:30:00Z"
+    }
+  ]
+}
+```
+
+### Getting Campaign Details
+
+```bash
+curl -X GET https://karibu.briq.tz/v1/campaigns/camp_xyz789abc123def \
+-H "X-API-Key: your_api_key_here"
+```
+
+### Updating a Campaign
+
+```bash
+curl -X PATCH https://karibu.briq.tz/v1/campaigns/update/camp_xyz789abc123def \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "name": "Updated Summer Sale 2024",
+  "description": "Updated promotional campaign with extended offers"
+}'
+```
+
+## Sending Campaign Messages
+
+Once you have a campaign created, you can send messages to multiple recipients through it:
+
+```bash
+curl -X POST https://karibu.briq.tz/v1/messages/campaign/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "campaign_id": "camp_xyz789abc123def",
+  "phone_numbers": [
+    "255712345678",
+    "255787654321", 
+    "255798765432"
+  ],
+  "message": "🏖️ Summer Sale: 30% off all items! Use code SUMMER30. Shop now: bit.ly/summer-sale",
+  "sender_id": "YourStore"
+}'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "campaign_id": "camp_xyz789abc123def",
+  "message_ids": ["msg_123", "msg_124", "msg_125"],
+  "recipients_count": 3,
+  "message": "🏖️ Summer Sale: 30% off all items! Use code SUMMER30. Shop now: bit.ly/summer-sale",
+  "sender_id": "YourStore",
+  "sent_at": "2024-08-10T10:30:00Z"
+}
+```
+
+### Campaign Message Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `campaign_id` | string | Yes | ID of the campaign to send through |
+| `phone_numbers` | array | Yes | List of recipient phone numbers |
+| `message` | string | Yes | SMS message content |
+| `sender_id` | string | Yes | Your brand name or sender identifier |
+
+
+## Best Practices
+
+### Campaign Organization
+1. **Descriptive Names**: Use clear, specific campaign names
+2. **Workspace Structure**: Group related campaigns in appropriate workspaces
+3. **Documentation**: Add meaningful descriptions to campaigns
+4. **Regular Cleanup**: Archive old campaigns to keep lists manageable
+
+### Message Content
+1. **Clear Purpose**: Make the campaign intent obvious in the message
+2. **Brand Consistency**: Use consistent sender IDs across campaigns
+3. **Call to Action**: Include clear next steps for recipients
+4. **Length Management**: Keep messages concise but informative
+
+### Recipient Management
+1. **Phone Number Format**: Ensure proper formatting with country codes
+2. **List Validation**: Verify phone numbers before sending
+3. **Batch Size**: Consider sending limits and split large lists if needed
+4. **Opt-out Compliance**: Respect recipient preferences and regulations
+
+## Common Use Cases
+
+### Marketing Campaigns
+```bash
+# Create marketing campaign
+curl -X POST https://karibu.briq.tz/v1/campaigns/create/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "workspace_id": "ws_marketing123",
+  "name": "Product Launch Q4",
+  "description": "New product launch campaign for Q4 2024"
+}'
+
+# Send promotional message
+curl -X POST https://karibu.briq.tz/v1/messages/campaign/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "campaign_id": "camp_launch123",
+  "phone_numbers": ["255712345678", "255787654321"],
+  "message": "🚀 Introducing our latest product! Early bird discount: 25% off. Get yours today!",
+  "sender_id": "TechCorp"
+}'
+```
+
+### Event Notifications
+```bash
+# Create event campaign  
+curl -X POST https://karibu.briq.tz/v1/campaigns/create/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "workspace_id": "ws_events456",
+  "name": "Annual Conference 2024",
+  "description": "Communications for annual conference attendees"
+}'
+
+# Send event reminder
+curl -X POST https://karibu.briq.tz/v1/messages/campaign/ \
+-H "Content-Type: application/json" \
+-H "X-API-Key: your_api_key_here" \
+-d '{
+  "campaign_id": "camp_conference456",
+  "phone_numbers": ["255712345678", "255787654321"],
+  "message": "📅 Reminder: Annual Conference tomorrow at 9 AM. Venue: City Hall. See you there!",
+  "sender_id": "Conference"
+}'
+```
+---
+
+*For detailed API reference, visit [Campaign API](/Karibu-Campaign)*

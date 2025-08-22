@@ -1,0 +1,164 @@
+# Karibu-OTP
+
+---
+title: "Karibu OTP — API Reference"
+description: "API reference and guide for One-Time Password (OTP) operations."
+---
+
+## Karibu OTP — API Reference
+
+A compact technical reference for OTP operations. For conceptual guidance see the Guides: [OTP](/guides/otp). All endpoints require the X-API-Key header and operate within the authenticated user's workspace scope.
+
+### Common headers
+- X-API-Key (string, required)
+
+## OTP (One-Time Passwords) Guide
+
+OTP (One-Time Passwords) allow you to securely verify users during login, registration, or sensitive transactions. An OTP is typically a numeric or alphanumeric code sent to a user’s phone or email, and then validated by your system.
+
+### When to Use OTP
+* User authentication — secure logins, password resets.  
+* Transaction verification — approve payments or account actions.  
+* Access control — confirm identity before sensitive operations.  
+* Registration flows — verify new users’ phone numbers or emails.
+
+### How OTP Works
+1. Request an OTP → call the Briq API to generate and deliver a code (SMS or voice).  
+2. User receives OTP → code delivered to recipient.  
+3. Validate OTP → submit the code back to the Briq API for verification.  
+4. Grant or deny access based on validation response.
+
+Channels supported: sms, voice call.
+
+### Available Operations
+* Request OTP → Generate and send a one-time password.  
+* Validate OTP → Confirm that the provided OTP is correct and active.  
+* Resend OTP → Re-send an existing or new OTP to the recipient.
+
+### Steps to Use OTP
+1. Request an OTP using POST /v1/otp/request with recipient and channel.  
+2. Deliver code to user (SMS or voice).  
+3. Validate the code using POST /v1/otp/validate with the OTP and request id.  
+4. Optionally resend using POST /v1/otp/resend if the user did not receive it.
+
+### Best practices
+* Use short expiry times for OTPs (e.g., 5–10 minutes).  
+* Limit validation attempts to prevent brute-force.  
+* Rate-limit request/resend calls per recipient.  
+* Use numeric codes for SMS; voice may support longer alphanumeric tokens.
+
+## Interactive playgrounds
+
+The interactive API playground pages for OTP endpoints live under the `endpoints/` folder.
+
+- [Request OTP](/Karibu-OTP/endpoints/request-otp)
+- [Validate OTP](/Karibu-OTP/endpoints/validate-otp)
+- [Resend OTP](/Karibu-OTP/endpoints/resend-otp)
+
+---
+
+### Request OTP
+
+Endpoint  
+POST /v1/otp/request
+
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
+```json
+{
+  "recipient": "+255712345678",
+  "channel": "sms",            // "sms" or "call"
+  "length": 6,
+  "minutes_to_expire": 5,
+  "message_template": "Your verification code is {code}"
+}
+```
+
+Response — 201 Created
+```json
+{
+  "request_id": "otpreq_123456",
+  "recipient": "+255712345678",
+  "channel": "sms",
+  "expires_at": "2019-08-24T14:20:22Z",
+  "sent": true
+}
+```
+
+Response — 422 Validation Error
+```json
+{ "detail":[{ "msg":"Invalid recipient or channel" }] }
+```
+
+---
+
+### Validate OTP
+
+Endpoint  
+POST /v1/otp/validate
+
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
+```json
+{
+  "request_id": "otpreq_123456",
+  "code": "123456"
+}
+```
+
+Response — 200 OK
+```json
+{ "valid": true, "authenticated": true, "user_id": "a169451c-..." }
+```
+
+Response — 400 / 422
+```json
+{ "valid": false, "detail":[{ "msg":"Invalid or expired code" }] }
+```
+
+---
+
+### Resend OTP
+
+Endpoint  
+POST /v1/otp/resend
+
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
+```json
+{
+  "request_id": "otpreq_123456",
+  "channel": "sms"         // optional override, "sms" or "voice"
+}
+```
+
+Response — 200 OK
+```json
+{
+  "request_id": "otpreq_123456",
+  "resent": true,
+  "sent_at": "2019-08-24T14:16:22Z"
+}
+```
+
+Response — 429 Too Many Requests / 422
+```json
+{ "detail":[{ "msg":"Rate limit exceeded or invalid request_id" }] }
+```
+
+---
+
+### Notes and best practices
+
+- Channels: use "sms" for text delivery or "voice" for automated call delivery.  
+- Keep OTP lifetime short and limit validation attempts.  
+- Store request_id for matching validation attempts and for troubleshooting.  
+- Log delivery and validation events for audit and debugging.
+
+If you need SDK examples or additional language code samples, request the specific language and code samples will be added.
