@@ -5,13 +5,26 @@
   "colors": { "primary": "#00B894" },
   "navigation": {
     "pages": [
-      "index",
-      "signup",
-      "Karibu-Campaign/index",
-      "Karibu-Developer-Apps/index",
-      "Karibu-Messages/index",
-      "Karibu-OTP/index",
-      "Karibu-Workspace/index"
+      {
+        "group": "Guides",
+        "pages": [
+          "index",
+          "signup",
+          "quickstart",
+          "development",
+          "security-notes"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "Karibu-Workspace/index",
+          "Karibu-Messages/index",
+          "Karibu-Campaign/index",
+          "Karibu-OTP/index",
+          "Karibu-Developer-Apps/index"
+        ]
+      }
     ]
   },
   "logo": { "light": "/logo/light.svg", "dark": "/logo/dark.svg" },

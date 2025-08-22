@@ -7,99 +7,202 @@ Step 1: Set up your local environment
   <accordion icon="key" title="Obtain and store your API key">
     Log into your [BRIQ dashboard](https://karibu.briq.tz) and navigate to Settings → API Keys → Generate New Key to get your API key. Store it securely in environment variables:
     ```bash
-    export BRIQ_API_KEY="your_api_key_here"
-    ```
-    <tip>Never hardcode your API key in source code. Use environment variables for security.</tip>
-  </accordion>
-  <accordion icon="rectangle-terminal" title="Set up your development environment">
-    Ensure you have an HTTP client installed (e.g., `axios` for Node.js, `requests` for Python, or PHP cURL). Configure the BRIQ API base URL:
-    ```plaintext
-    Base URL: https://karibu.briq.tz/
-    ```
-    Test your setup with a simple cURL command:
-    ```bash
-    curl -X GET "https://karibu.briq.tz/v1/health" \
-    -H "X-API-Key: your_api_key_here"
-    ```
-    <tip>Verify the response shows `"status": "healthy"` to confirm your setup.</tip>
-  </accordion>
-</accordiongroup>
-Step 2: Integrate the API
-<accordiongroup>
-  <accordion icon="code" title="Choose your programming language">
-    Install the required HTTP client for your language:
-    - **Node.js**: `npm install axios`
-    - **Python**: `pip install requests`
-    - **PHP**: Ensure the cURL extension is enabled (`php -m | grep curl`)
-<p>Create a simple BRIQ client. For example, in Node.js:</p>
-<pre><code class="language-javascript">const axios = require('axios');
-class BriqClient {
-  constructor(apiKey) {
-    this.apiKey = apiKey;
-    this.baseURL = 'https://karibu.briq.tz';
-    this.headers = { 'X-API-Key': apiKey, 'Content-Type': 'application/json' };
-  }
-  async sendSMS(content, recipients, senderId = 'BRIQ') {
-    const response = await axios.post(`${this.baseURL}/v1/message/send-instant`, {
-      content, recipients, sender_id: senderId
-    }, { headers: this.headers });
-    return response.data;
-  }
-}
-</code></pre>
-<p><tip>Explore similar examples for Python and PHP in the <a href="https://docs.briq.tz">BRIQ documentation</a>.</tip>
+    ---
+    title: "Quickstart"
+    description: "Get started with BRIQ SMS API integration in minutes"
+    ---
 
-<accordion icon="message" title="Send a test message">
-Use your client to send a test SMS:</accordion></p>
-<pre><code class="language-javascript">const briq = new BriqClient(process.env.BRIQ_API_KEY);
-briq.sendSMS('Hello from BRIQ!', ['255788344348'])
-  .then(result => console.log('Success:', result))
-  .catch(error => console.error('Error:', error));
-</code></pre>
-<p>Or with cURL:</p>
-<pre><code class="language-bash">curl -X POST https://karibu.briq.tz/v1/message/send-instant \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{"content": "BRIQ API test message", "recipients": ["255788344348"], "sender_id": "BRIQ"}'
-</code></pre>
-<p><tip>Check the response to confirm the message was sent successfully.</tip>
+    Get started in three steps. Set up the BRIQ SMS API and send your first message.
 
-</p>
-<h3>Step 3: Go live</h3>
-<accordion icon="rocket" title="Deploy and monitor your integration">
-  1. Save your code and environment variables (e.g., in a `.env` file):
-     ```bash
-     BRIQ_API_KEY=your_production_api_key
-     BRIQ_BASE_URL=https://karibu.briq.tz
-     BRIQ_DEFAULT_SENDER=YOURCOMPANY
-     ```
-  2. Deploy your application to your production environment.
-  3. Monitor message delivery using the BRIQ dashboard or set up a webhook to receive delivery status updates:
-     ```bash
-     curl -X PATCH https://karibu.briq.tz/v1/workspace/update/ws_your_workspace_id \
-     -H "Content-Type: application/json" \
-     -H "X-API-Key: your_api_key_here" \
-     -d '{"settings": {"webhook_url": "https://yourapp.com/webhooks/briq"}}'
-     ```
-</accordion>
-<h2>Next steps</h2>
-<p>Now that your BRIQ SMS API is integrated, explore these key features:</p>
-<cardgroup cols="{2}">
-<card title="Create Workspaces" icon="folder" href="/workspaces">
-  Organize your SMS projects with workspaces.
-</card>
-<card title="Set Up Campaigns" icon="bullhorn" href="/campaigns">
-  Plan and structure your messaging initiatives.
-</card>
-<card title="Import Recipients" icon="users" href="/messages">
-  Add and manage contact lists for SMS campaigns.
-</card>
-<card title="API Reference" icon="code" href="/api-reference">
-  Explore the full OpenAPI specification and endpoint documentation.
-</card>
-</cardgroup>
-<note>
-  **Need help?** Visit the [BRIQ documentation](https://docs.briq.tz) or contact [support@briq.tz](mailto:support@briq.tz).
-</note>
-<hr>
-<p>This version streamlines the BRIQ SMS API setup process into three clear steps, using the Mintlify template's structure and components like <code>AccordionGroup</code>, <code>Tip</code>, and <code>CardGroup</code>. It focuses on the essentials for quick integration while linking to further resources for advanced features, matching the tone and intent of the original Mintlify Quickstart.</p></accordion></accordiongroup>
+    ## Step 1: Set up your local environment
+
+    <AccordionGroup>
+      <Accordion icon="key" title="Obtain and store your API key">
+        Log into your [BRIQ dashboard](https://karibu.briq.tz) and navigate to Settings → API Keys → Generate New Key to get your API key. Store it securely in environment variables:
+
+        ```bash
+        export BRIQ_API_KEY="your_api_key_here"
+        ```
+
+        <Tip>Never hardcode your API key in source code. Use environment variables for security.</Tip>
+      </Accordion>
+
+      <Accordion icon="rectangle-terminal" title="Set up your development environment">
+        Ensure you have an HTTP client installed (e.g., `axios` for Node.js, `requests` for Python, or PHP cURL). Configure the BRIQ API base URL:
+
+        ```plaintext
+        Base URL: https://karibu.briq.tz/
+        ```
+
+        Test your setup with a simple cURL command:
+
+        ```bash
+        curl -X GET "https://karibu.briq.tz/v1/health" \
+          -H "X-API-Key: your_api_key_here"
+        ```
+
+        <Tip>Verify the response shows `"status": "healthy"` to confirm your setup.</Tip>
+      </Accordion>
+    </AccordionGroup>
+
+    ## Step 2: Integrate the API
+
+    <AccordionGroup>
+      <Accordion icon="code" title="Choose your programming language">
+        Install the required HTTP client for your language:
+
+        - **Node.js**: `npm install axios`
+        - **Python**: `pip install requests`
+        - **PHP**: Ensure the cURL extension is enabled (`php -m | grep curl`)
+
+        <p>Create a simple BRIQ client. For example, in Node.js:</p>
+
+        ```javascript
+        const axios = require('axios');
+        class BriqClient {
+          constructor(apiKey) {
+            this.apiKey = apiKey;
+            this.baseURL = 'https://karibu.briq.tz';
+            this.headers = { 'X-API-Key': apiKey, 'Content-Type': 'application/json' };
+          }
+          ---
+          title: "Quickstart"
+          description: "Get started with BRIQ SMS API integration in minutes"
+          ---
+
+          Get started in three steps. Set up the BRIQ SMS API and send your first message.
+
+          ## Step 1: Set up your local environment
+
+          <AccordionGroup>
+            <Accordion icon="key" title="Obtain and store your API key">
+              Log into your [BRIQ dashboard](https://karibu.briq.tz) and navigate to Settings → API Keys → Generate New Key to get your API key. Store it securely in environment variables:
+
+              ```bash
+              export BRIQ_API_KEY="your_api_key_here"
+              ```
+
+              <Tip>Never hardcode your API key in source code. Use environment variables for security.</Tip>
+            </Accordion>
+
+            <Accordion icon="rectangle-terminal" title="Set up your development environment">
+              Ensure you have an HTTP client installed (e.g., `axios` for Node.js, `requests` for Python, or PHP cURL). Configure the BRIQ API base URL:
+
+              ```plaintext
+              Base URL: https://karibu.briq.tz/
+              ```
+
+              Test your setup with a simple cURL command:
+
+              ```bash
+              curl -X GET "https://karibu.briq.tz/v1/health" \
+                -H "X-API-Key: your_api_key_here"
+              ```
+
+              <Tip>Verify the response shows `"status": "healthy"` to confirm your setup.</Tip>
+            </Accordion>
+          </AccordionGroup>
+
+          ## Step 2: Integrate the API
+
+          <AccordionGroup>
+            <Accordion icon="code" title="Choose your programming language">
+              Install the required HTTP client for your language:
+
+              - **Node.js**: `npm install axios`
+              - **Python**: `pip install requests`
+              - **PHP**: Ensure the cURL extension is enabled (`php -m | grep curl`)
+
+              <p>Create a simple BRIQ client. For example, in Node.js:</p>
+
+              ```javascript
+              const axios = require('axios');
+              class BriqClient {
+                constructor(apiKey) {
+                  this.apiKey = apiKey;
+                  this.baseURL = 'https://karibu.briq.tz';
+                  this.headers = { 'X-API-Key': apiKey, 'Content-Type': 'application/json' };
+                }
+                async sendSMS(content, recipients, senderId = 'BRIQ') {
+                  const response = await axios.post(`${this.baseURL}/v1/message/send-instant`, {
+                    content, recipients, sender_id: senderId
+                  }, { headers: this.headers });
+                  return response.data;
+                }
+              }
+              ```
+
+              <Tip>Explore similar examples for Python and PHP in the <a href="https://docs.briq.tz">BRIQ documentation</a>.</Tip>
+            </Accordion>
+
+            <Accordion icon="message" title="Send a test message">
+              Use your client to send a test SMS:
+
+              ```javascript
+              const briq = new BriqClient(process.env.BRIQ_API_KEY);
+              briq.sendSMS('Hello from BRIQ!', ['255788344348'])
+                .then(result => console.log('Success:', result))
+                .catch(error => console.error('Error:', error));
+              ```
+
+              Or with cURL:
+
+              ```bash
+              curl -X POST https://karibu.briq.tz/v1/message/send-instant \
+                -H "Content-Type: application/json" \
+                -H "X-API-Key: your_api_key_here" \
+                -d '{"content": "BRIQ API test message", "recipients": ["255788344348"], "sender_id": "BRIQ"}'
+              ```
+
+              <Tip>Check the response to confirm the message was sent successfully.</Tip>
+            </Accordion>
+          </AccordionGroup>
+
+          ## Step 3: Go live
+
+          <Accordion icon="rocket" title="Deploy and monitor your integration">
+            1. Save your code and environment variables (e.g., in a `.env` file):
+
+               ```bash
+               BRIQ_API_KEY=your_production_api_key
+               BRIQ_BASE_URL=https://karibu.briq.tz
+               BRIQ_DEFAULT_SENDER=YOURCOMPANY
+               ```
+
+            2. Deploy your application to your production environment.
+            3. Monitor message delivery using the BRIQ dashboard or set up a webhook to receive delivery status updates:
+
+               ```bash
+               curl -X PATCH https://karibu.briq.tz/v1/workspace/update/ws_your_workspace_id \
+                 -H "Content-Type: application/json" \
+                 -H "X-API-Key: your_api_key_here" \
+                 -d '{"settings": {"webhook_url": "https://yourapp.com/webhooks/briq"}}'
+               ```
+          </Accordion>
+
+          ## Next steps
+
+          Now that your BRIQ SMS API is integrated, explore these key features:
+
+          <CardGroup cols={2}>
+            <Card title="Create Workspaces" icon="folder" href="/workspaces">
+              Organize your SMS projects with workspaces.
+            </Card>
+            <Card title="Set Up Campaigns" icon="bullhorn" href="/campaigns">
+              Plan and structure your messaging initiatives.
+            </Card>
+            <Card title="Import Recipients" icon="users" href="/messages">
+              Add and manage contact lists for SMS campaigns.
+            </Card>
+            <Card title="API Reference" icon="code" href="/api-reference">
+              Explore the full OpenAPI specification and endpoint documentation.
+            </Card>
+          </CardGroup>
+
+          <Note>
+            **Need help?** Visit the [BRIQ documentation](https://docs.briq.tz) or contact [support@briq.tz](mailto:support@briq.tz).
+          </Note>
+
+          ---
+
+          This version streamlines the BRIQ SMS API setup process into three clear steps, using the Mintlify template's structure and components like <code>AccordionGroup</code>, <code>Tip</code>, and <code>CardGroup</code>. It focuses on the essentials for quick integration while linking to further resources for advanced features, matching the tone and intent of the original Mintlify Quickstart.
