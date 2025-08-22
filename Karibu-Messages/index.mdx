@@ -1,19 +1,83 @@
-# Karibu-Messages
-
 ---
-title: "Karibu Messages"
+title: "Karibu Messages — Guide"
+description: "Guide for instant and campaign messaging with Briq."
 ---
 
-Welcome to the Karibu Messages API documentation.
+# Messaging
 
-## Overview
+Messaging allows you to communicate directly with your users via SMS. Briq provides two main ways to send messages:
 
-Describe the messaging features here.
+- Instant Messages → Send a single or small batch of messages immediately.  
+- Campaign Messages → Send messages at scale, to large groups, often with scheduling or personalization.
 
-## Endpoints
+## When to Use Messaging
 
-- Send message
-- List messages
-- Message status
+- Notifications - order updates, delivery confirmations, password resets.  
+- Marketing Campaigns - promotions, offers, event invitations.  
+- Service Alerts - downtime notices, reminders, system warnings. 
 
-...add details for each endpoint...
+## How Messaging Works
+
+1. Compose a Message → Define recipient(s), message content, and sender ID.  
+2. Send Message → Use Instant Message API for one-off messages or Campaign API for bulk sends.  
+3. Track Delivery → Delivery reports provide status updates for each message (e.g., SENT, DELIVERED, FAILED).
+
+## Messaging Types
+
+### Instant Messages
+- Best for real-time alerts or low-volume communication.  
+- Example: “Your verification code is 123456.”
+
+### Campaign Messages
+- Best for marketing or bulk communication.  
+- Supports scheduling, targeting, and personalization.  
+- Example: “Get 20% off all items this weekend at BriqStore. Visit briqstore.com.”
+
+## Example Workflow
+
+### Sending an Instant Message
+```json
+{
+  "recipient": "255712345678",
+  "message": "Hello, your order has been confirmed!",
+  "sender_id": "BRIQ"
+}
+```
+Response:
+```json
+{ "message_id": "uuid", "status": "sent" }
+```
+
+### Sending a Campaign Message
+```json
+{
+  "recipients": ["255712345678","255713987654"],
+  "message": "Flash Sale! 30% off all items today only!",
+  "sender_id": "BRIQ",
+  "schedule_time": "2025-08-22T18:00:00Z"
+}
+```
+Response:
+```json
+{ "campaign_id": "uuid", "status": "scheduled", "total_recipients": 2 }
+```
+
+## Delivery Reports
+
+- Each message or campaign can generate a delivery report with statuses such as:
+  - SENT - message accepted by the gateway
+  - DELIVERED - message reached the recipient’s device
+  - FAILED - message could not be delivered
+
+## Best Practices
+
+- Use Instant Messages for critical, time-sensitive updates.  
+- Use Campaign Messages for marketing, respecting opt-in/opt-out laws.  
+- Capture delivery reports to monitor success and troubleshoot failures.  
+- Segment audiences for more effective campaigns.  
+- Schedule sends to match recipient time zones and peak engagement windows.
+
+## Interactive playgrounds
+
+- Instant Messages endpoints: /Karibu-Messages/endpoints/send-message  
+- Campaign endpoints: /Karibu-Campaign/endpoints/send-campaign-message
