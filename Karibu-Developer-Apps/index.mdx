@@ -1,20 +1,260 @@
-# Karibu-Developer Apps
+---
+title: "Karibu Developer Apps — API Reference"
+description: "API reference for Developer Apps operations."
+---
+
+## Karibu Developer Apps — API Reference
+
+A compact technical reference for developer apps operations. For conceptual guidance see the Guides: [Developer Apps](/guides/developer-apps). All endpoints require the X-API-Key header and operate within the authenticated user's workspace scope.
+
+### Common headers
+- X-API-Key (string, required)
+
+## Developer Apps Guide
+
+Developer Apps let you securely integrate your Briq workspace with external systems. They generate an **App Key** that works alongside your API Key to access restricted routes, such as OTP services.
+
+### When to use Developer Apps
+
+* If you want to connect Briq messaging or OTP to your mobile app, web service, or backend.
+* If your workspace requires **developer access** (`developer_access = true`).
+
+### Steps to Create and Use a Developer App
+
+1. **Ensure your workspace has developer access**
+   * Only workspaces created with `developer_access = true` can create and use developer apps.
+   * This ensures your workspace is isolated and secure for API testing.
+
+2. **Create a Developer App**
+   * Use the `POST /v1/developer_apps/` endpoint.
+   * Provide:
+     * `app_name`: A descriptive name for your app.
+     * `app_description`: Purpose of the app.
+     * `workspace_id`: The ID of the workspace where this app belongs.
+
+3. **Retrieve your App Key**
+   * After creation, the app will have a unique `app_key`.
+   * You'll use this key in OTP and other developer-restricted requests.
+
+4. **Manage Developer Apps**
+   * List apps by workspace, get by ID, update details, or delete apps.
+   * Useful for rotating app keys, cleaning up old integrations, or auditing access.
+
+5. **Use Developer Apps for OTP**
+   * When requesting or verifying OTPs, both `X-API-Key` (your account key) and the `app_key` (developer app) must be provided.
+   * Example:
+     ```json
+     {
+       "phone_number": "+255712345678",
+       "app_key": "devapp_123456",
+       "sender_id": "BRIQ OTP",
+       "otp_length": 6,
+       "minutes_to_expire": 10,
+       "delivery_method": "sms",
+       "message_template": "Your OTP is {code}"
+     }
+     ```
+
+6. **Best Practices**
+   * Rotate `app_key` regularly to reduce risk if compromised.
+   * Do not share your `app_key` publicly (treat it like a password).
+   * Use separate apps per environment (development, staging, production).
+
+## Interactive playgrounds
+
+The interactive API playground pages for developer apps endpoints live under the
+`endpoints/` folder. Each page is an MDX endpoint page which Mintlify can render
+as an interactive playground when API settings are configured in `docs.json`.
+
+- [Create Developer App](/Karibu-Developer-Apps/endpoints/create-app)
+- [List Developer Apps](/Karibu-Developer-Apps/endpoints/list-apps)
+- [Get Developer App](/Karibu-Developer-Apps/endpoints/get-app)
+- [Update Developer App](/Karibu-Developer-Apps/endpoints/update-app)
+- [Delete Developer App](/Karibu-Developer-Apps/endpoints/delete-app)
 
 ---
-title: "Karibu Developer Apps"
+
+### Create Developer App
+
+Endpoint
+POST /v1/developer_apps/
+
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
+```json
+{
+  "app_name": "string",
+  "app_description": "string",
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9"
+}
+```
+
+Response — 201 Created
+```json
+{
+  "app_id": "dapp_123456789",
+  "app_key": "devapp_abcdef123456",
+  "app_name": "string",
+  "app_description": "string",
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "created_at": "2019-08-24T14:15:22Z",
+  "is_active": true
+}
+```
+
+Response — 422 Validation Error
+```json
+{
+  "detail": [ { "msg": "Workspace does not have developer access enabled" } ]
+}
+```
+
 ---
 
-Welcome to the Karibu Developer Apps API documentation.
+### List Developer Apps
 
-## Overview
+Endpoint
+GET /v1/developer_apps/
 
-Describe developer app features here.
+Headers
+- `X-API-Key` (required)
 
-## Endpoints
+Query parameters
+- `workspace_id` (string, optional): Filter by workspace ID
 
-- List apps
-- Register app
-- Update app
-- Delete app
+Response — 200 OK
+```json
+[
+  {
+    "app_id": "dapp_123456789",
+    "app_key": "devapp_abcdef123456",
+    "app_name": "string",
+    "app_description": "string",
+    "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+    "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+    "created_at": "2019-08-24T14:15:22Z",
+    "is_active": true
+  }
+]
+```
 
-...add details for each endpoint...
+Response — 401 Unauthorized / 422
+```json
+{
+  "detail": [ { "msg": "Unauthorized request" } ]
+}
+```
+
+---
+
+### Get Developer App
+
+Endpoint
+GET /v1/developer_apps/{app_id}
+
+Path parameters
+- `app_id` (string, required): Developer App ID
+
+Headers
+- `X-API-Key` (required)
+
+Response — 200 OK
+```json
+{
+  "app_id": "dapp_123456789",
+  "app_key": "devapp_abcdef123456",
+  "app_name": "string",
+  "app_description": "string",
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "created_at": "2019-08-24T14:15:22Z",
+  "is_active": true
+}
+```
+
+Response — 404 / 422
+```json
+{
+  "detail": [ { "msg": "Developer app not found or unauthorized" } ]
+}
+```
+
+---
+
+### Update Developer App
+
+Endpoint
+PUT /v1/developer_apps/{app_id}
+
+Path parameters
+- `app_id` (string, required): Developer App ID
+
+Headers
+- `X-API-Key` (required)
+
+Request body (application/json)
+```json
+{
+  "app_name": "string",
+  "app_description": "string",
+  "is_active": true
+}
+```
+
+Response — 200 OK
+```json
+{
+  "app_id": "dapp_123456789",
+  "app_key": "devapp_abcdef123456",
+  "app_name": "string",
+  "app_description": "string",
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "created_at": "2019-08-24T14:15:22Z",
+  "is_active": false
+}
+```
+
+Response — 422 Validation Error
+```json
+{
+  "detail": [ { "msg": "Invalid update request" } ]
+}
+```
+
+---
+
+### Delete Developer App
+
+Endpoint
+DELETE /v1/developer_apps/{app_id}
+
+Path parameters
+- `app_id` (string, required): Developer App ID
+
+Headers
+- `X-API-Key` (required)
+
+Response — 204 No Content
+
+Response — 404 / 422
+```json
+{
+  "detail": [ { "msg": "Developer app not found or unauthorized" } ]
+}
+```
+
+---
+
+### Notes and best practices
+
+- Developer Apps are scoped to workspaces and require `developer_access = true`.
+- App Keys (`app_key`) are used alongside API Keys for OTP and restricted endpoints.
+- Always rotate app keys regularly and treat them as sensitive credentials.
+- Use separate apps for different environments (development, staging, production).
+- Deactivate unused apps by setting `is_active = false` instead of deleting them.
+
+If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.

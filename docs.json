@@ -116,7 +116,7 @@
       "auth": {
         "method": "bearer",
         "name": "Authorization",
-        "placeholder": "Bearer your_api_token_here"
+        "placeholder": "X-API your_api_token_here"
       }
     }
   }
