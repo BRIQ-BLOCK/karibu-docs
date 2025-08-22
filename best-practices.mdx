@@ -1,0 +1,45 @@
+---
+title: Best Practices
+description: Recommendations for sender IDs, OTP expiry, campaign structuring, and security.
+---
+
+# Best Practices
+
+## Sender ID
+
+- Use 3–11 characters; A–Z, 0–9; avoid special chars.
+- Choose a recognizable brand; keep consistent across messages.
+- Some regions require pre-registration; plan lead time.
+
+## OTP settings
+
+- Expiry: 2–5 minutes is typical; balance UX and security.
+- Length: 4–6 digits; avoid predictable sequences.
+- Limit attempts and add cool-down after repeated failures.
+
+## Campaigns vs. Instant
+
+- Use Campaigns for bulk sends, scheduling, and analytics.
+- Use Instant for transactional messages (receipts, OTPs).
+- Segment recipients and personalize content when possible.
+
+## Content quality
+
+- Keep messages concise; include clear call-to-action.
+- Localize language; consider Swahili voice/WhatsApp where relevant.
+
+## Deliverability
+
+- Respect quiet hours and regional regulations.
+- Prefer opt-in lists; include STOP/HELP where required.
+
+## Security
+
+- Never log API keys or OTP codes.
+- Rotate keys periodically; use per-environment keys.
+- Restrict developer access per workspace.
+
+## Links
+
+- [Security Notes](/security-notes)
+- [Error Handling](/error-handling)

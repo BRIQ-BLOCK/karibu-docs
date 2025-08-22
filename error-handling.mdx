@@ -1,0 +1,68 @@
+---
+title: Error Handling
+description: Common error codes, retry strategies, and rate limits for Karibu APIs.
+---
+
+# Error Handling
+
+Handle API errors consistently to build resilient integrations.
+
+## HTTP status codes
+
+- 200–299: Success
+- 400: Bad Request — validation failed or missing fields
+- 401: Unauthorized — missing/invalid API key
+- 403: Forbidden — insufficient permissions or workspace restrictions
+- 404: Not Found — resource doesn’t exist
+- 409: Conflict — duplicate or state conflict
+- 422: Unprocessable Entity — semantic validation failed
+- 429: Too Many Requests — rate limit exceeded
+- 5xx: Server error — retry with backoff
+
+## Rate limits
+
+- Burst-safe; sustained high volume may be throttled with 429 responses.
+- Respect the Retry-After header where present.
+
+## Retry strategy
+
+- Idempotent operations: exponential backoff (e.g., 1s, 2s, 4s, 8s; jitter recommended).
+- Non-idempotent operations: prefer explicit confirmation endpoints or deduplication keys.
+
+## Error body shape
+
+```json
+{
+  "error": {
+    "code": "string",
+    "message": "Human-readable message",
+    "details": { "field": "info" }
+  }
+}
+```
+
+## Example
+
+```bash
+curl -i -X POST https://karibu.briq.tz/v1/message/send-instant \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key" \
+  -d '{"content": "hi"}'
+```
+
+Response:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "recipients is required",
+    "details": { "recipients": "missing" }
+  }
+}
+```
+
+## See also
+
+- [Security Notes](/security-notes)
+- Related endpoints in [API Reference](/Karibu-Messages/index)

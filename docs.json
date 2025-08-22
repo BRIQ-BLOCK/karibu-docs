@@ -13,12 +13,50 @@
         "tab": "Guides",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Overview",
             "pages": [
               "index",
               "signup",
               "quickstart",
-              "security-notes"
+              "security-notes",
+              "error-handling",
+              "best-practices"
+            ]
+          },
+          {
+            "group": "Workspaces",
+            "pages": [
+              "guides/workspaces"
+            ]
+          },
+          {
+            "group": "Campaigns",
+            "pages": [
+              "guides/campaigns"
+            ]
+          },
+          {
+            "group": "Messaging",
+            "pages": [
+              "guides/messaging"
+            ]
+          },
+          {
+            "group": "Developer Apps",
+            "pages": [
+              "guides/developer-apps"
+            ]
+          },
+          {
+            "group": "OTP",
+            "pages": [
+              "guides/otp"
+            ]
+          },
+          {
+            "group": "Webhooks & Callbacks",
+            "pages": [
+              "guides/webhooks"
             ]
           }
         ]
@@ -27,13 +65,39 @@
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Health & Version",
             "pages": [
-              "Karibu-Workspace/index",
-              "Karibu-Messages/index",
-              "Karibu-Campaign/index",
-              "Karibu-OTP/index",
+              "Karibu-Health/index"
+            ]
+          },
+          {
+            "group": "Workspaces",
+            "pages": [
+              "Karibu-Workspace/index"
+            ]
+          },
+          {
+            "group": "Messages",
+            "pages": [
+              "Karibu-Messages/index"
+            ]
+          },
+          {
+            "group": "Campaigns",
+            "pages": [
+              "Karibu-Campaign/index"
+            ]
+          },
+          {
+            "group": "Developer Apps",
+            "pages": [
               "Karibu-Developer-Apps/index"
+            ]
+          },
+          {
+            "group": "OTP",
+            "pages": [
+              "Karibu-OTP/index"
             ]
           }
         ]

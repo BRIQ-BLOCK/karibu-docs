@@ -1,0 +1,22 @@
+---
+title: Health & Version
+description: Health check and API version endpoints.
+---
+
+# Health & Version
+
+## GET /v1/health
+
+Check service health.
+
+### Example (cURL)
+
+```bash
+curl -s -H "X-API-Key: $BRIQ_API_KEY" https://karibu.briq.tz/v1/health
+```
+
+### Response
+
+```json
+{ "status": "healthy", "version": "v1" }
+```
