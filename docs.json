@@ -52,46 +52,6 @@
           {
             "group": "API Routes",
             "openapi": "openapi.json"
-          },
-          {
-            "group": "Health & Version",
-            "pages": [
-              "Karibu-Health/index"
-            ]
-          },
-          {
-            "group": "Workspaces",
-            "pages": [
-              "Karibu-Workspace/index",
-              "Karibu-Workspace/endpoints/create-workspace",
-              "Karibu-Workspace/endpoints/list-workspaces",
-              "Karibu-Workspace/endpoints/get-workspace",
-              "Karibu-Workspace/endpoints/update-workspace"
-            ]
-          },
-          {
-            "group": "Messages",
-            "pages": [
-              "Karibu-Messages/index"
-            ]
-          },
-          {
-            "group": "Campaigns",
-            "pages": [
-              "Karibu-Campaign/index"
-            ]
-          },
-          {
-            "group": "Developer Apps",
-            "pages": [
-              "Karibu-Developer-Apps/index"
-            ]
-          },
-          {
-            "group": "OTP",
-            "pages": [
-              "Karibu-OTP/index"
-            ]
           }
         ]
       }
