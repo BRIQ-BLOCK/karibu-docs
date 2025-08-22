@@ -110,13 +110,13 @@
     },
     "mdx": {
       "server": [
-        "https://api.example.com",
-        "https://staging-api.example.com"
+        "http://karibu.briq.tz",
+        "https://karibu.briq.tz"
       ],
       "auth": {
-        "method": "key",
-        "name": "X-API-Key",
-        "placeholder": "sk_live_************************"
+        "method": "bearer",
+        "name": "Authorization",
+        "placeholder": "Bearer your_api_token_here"
       }
     }
   }
