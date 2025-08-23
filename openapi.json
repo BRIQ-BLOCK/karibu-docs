@@ -8,11 +8,11 @@
     "servers": [
         {
             "url": "http://karibu.briq.tz",
-            "description": "Production server"
+            "description": "LocalPass"
         },
         {
-            "url": "http://143.198.159.135:8000/",
-            "description": "Development server"
+            "url": "https://karibu.briq.tz",
+            "description": "Secure"
         }
     ],
     "paths": {

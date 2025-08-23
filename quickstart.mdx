@@ -25,14 +25,6 @@ Get started in three steps. Set up the BRIQ SMS API and send your first message.
     Base URL: https://karibu.briq.tz
     ```
 
-    Test your setup with a simple cURL command:
-
-    ```bash
-    curl -X GET "https://karibu.briq.tz/v1/health" \
-      -H "X-API-Key: your_api_key_here"
-    ```
-
-    <Tip>Verify the response shows "status": "healthy" to confirm your setup.</Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -53,7 +45,7 @@ Get started in three steps. Set up the BRIQ SMS API and send your first message.
     class BriqClient {
       constructor(apiKey) {
         this.apiKey = apiKey;
-        this.baseURL = 'https://karibu.briq.tz';
+        this.baseURL = 'https://briq.tz';
         this.headers = { 'X-API-Key': apiKey, 'Content-Type': 'application/json' };
       }
       async sendSMS(content, recipients, senderId = 'BRIQ') {
