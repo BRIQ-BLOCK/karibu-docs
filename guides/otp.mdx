@@ -1,23 +1,16 @@
 ---
 title: OTP (One-Time Passwords)
-description: Implement secure authentication flows with OTP codes delivered via SMS. Learn how to request and verify OTP codes using developer apps.
+description: Implement secure authentication flows with OTP codes delivered via SMS or voice. Learn how to request and verify OTP codes using developer apps.
 icon: 'lock'
 ---
 
-# OTP (One-Time Passwords)
+OTP (one-time passwords) are short, time-limited codes sent to a user's phone to confirm identity for sign-in, registration or sensitive actions. In Briq's developer workflow, OTPs are generated and delivered via developer apps and must be requested from workspaces with developer access enabled. Keep codes short-lived and single-use to reduce risk; store only request identifiers and avoid exposing them in client-side logs.
 
-OTP provides secure user verification through temporary codes delivered via SMS. This feature is essential for implementing secure authentication flows in your applications.
+To implement OTP flows create and link a developer app to a workspace with developer access enabled, request an OTP for a phone number, deliver the code (SMS or call) and then verify the code the user submits. Validate phone numbers (E.164) and code formats before calling the API, limit verification attempts, and apply rate limiting on request/resend endpoints. For user experience provide clear instructions, allow reasonable resends, and show remaining expiry time.
 
-## What is OTP?
+Delivery channel choice matters: voice calls often deliver more reliably than SMS in regions with flaky SMS routes or carrier filtering. Consider offering voice as a fallback or primary channel where reliability is critical.
 
-An OTP is a unique, time-limited code sent to a user's phone number for verification purposes. In Briq's implementation, OTP codes are delivered via SMS and require developer apps for access.
-
-### Key Characteristics
-- **Time-Limited**: Codes expire after a set duration
-- **Single-Use**: Each code can only be used once  
-- **Developer App Restricted**: Only accessible through configured developer apps
-- **SMS Delivery**: Codes are sent via SMS messages
-- **Workspace Access**: Requires workspaces with developer access enabled
+For API details (request, verify, resend, invalidate, status) refer to the Karibu OTP API reference.
 
 ## Requirements
 
@@ -94,6 +87,13 @@ curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
   "success": false,
   "otp_id": "otp_xyz789abc123def", 
   "verified": false,
+  "error": "Invalid or expired OTP code"
+}
+```
+
+---
+
+*For detailed API reference, visit [OTP API](/Karibu-OTP)*
   "error": "Invalid or expired OTP code"
 }
 ```

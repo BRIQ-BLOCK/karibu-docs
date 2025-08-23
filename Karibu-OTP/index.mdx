@@ -2,47 +2,47 @@
 
 ---
 title: "Karibu OTP — API Reference"
-description: "API reference and guide for One-Time Password (OTP) operations."
+description: "API reference and concise guide for One-Time Password (OTP) operations."
 ---
 
-## Karibu OTP — API Reference
+The Karibu OTP API lets developers request, verify, resend, invalidate and check the status of one-time passwords. All endpoints require the X-API-Key header to authenticate a developer app within a workspace.
 
-A compact technical reference for OTP operations. For conceptual guidance see the Guides: [OTP](/guides/otp). All endpoints require the X-API-Key header and operate within the authenticated user's workspace scope.
+Create an OTP with POST /v1/otp/request by providing the recipient phone (E.164), developer_app_id and optional settings such as otp_length, minutes_to_expire, delivery_method ("sms" or "call") and message_template. Verify with POST /v1/otp/verify (request_id or phone + code), resend with POST /v1/otp/resend, invalidate with POST /v1/otp/invalidate and check status with GET /v1/otp/status. Prefer "call" in regions where SMS routing is unreliable.
 
-### Common headers
-- X-API-Key (string, required)
+Request example:
+```json
+{
+  "phone_number": "+255712345678",
+  "developer_app_id": "briq_abc123xyz789",
+  "delivery_method": "sms",
+  "otp_length": 6,
+  "minutes_to_expire": 5,
+  "message_template": "Your verification code is {code}"
+}
+```
 
-## OTP (One-Time Passwords) Guide
+Standard success response:
+```json
+{
+  "success": true,
+  "message": "string",
+  "data": {},
+  "status_code": 200
+}
+```
 
-OTP (One-Time Passwords) allow you to securely verify users during login, registration, or sensitive transactions. An OTP is typically a numeric or alphanumeric code sent to a user’s phone or email, and then validated by your system.
+Interactive playground pages for endpoints are available under the endpoints/ folder if you want try-it-now examples. For SDK samples request a specific language and examples will be added.
+Standard success response format:
+```json
+{
+  "success": true,
+  "message": "string",
+  "data": {},
+  "status_code": 200
+}
+```
 
-### When to Use OTP
-* User authentication — secure logins, password resets.  
-* Transaction verification — approve payments or account actions.  
-* Access control — confirm identity before sensitive operations.  
-* Registration flows — verify new users’ phone numbers or emails.
-
-### How OTP Works
-1. Request an OTP → call the Briq API to generate and deliver a code (SMS or voice).  
-2. User receives OTP → code delivered to recipient.  
-3. Validate OTP → submit the code back to the Briq API for verification.  
-4. Grant or deny access based on validation response.
-
-Channels supported: sms, voice call.
-
-### Available Operations
-* Request OTP → Generate and send a one-time password.  
-* Validate OTP → Confirm that the provided OTP is correct and active.  
-* Resend OTP → Re-send an existing or new OTP to the recipient.
-
-### Steps to Use OTP
-1. Request an OTP using POST /v1/otp/request with recipient and channel.  
-2. Deliver code to user (SMS or voice).  
-3. Validate the code using POST /v1/otp/validate with the OTP and request id.  
-4. Optionally resend using POST /v1/otp/resend if the user did not receive it.
-
-### Best practices
-* Use short expiry times for OTPs (e.g., 5–10 minutes).  
+For errors the API returns a clear error message and appropriate HTTP status code. Keep OTP lifetimes short, limit verification attempts, and log delivery and verification events for monitoring and troubleshooting. If you need SDK examples or language samples, request a specific language and examples will be added.
 * Limit validation attempts to prevent brute-force.  
 * Rate-limit request/resend calls per recipient.  
 * Use numeric codes for SMS; voice may support longer alphanumeric tokens.
@@ -76,23 +76,31 @@ Request body (application/json)
 }
 ```
 
-Response — 201 Created
+Alternate request/resend payload example:
 ```json
 {
-  "request_id": "otpreq_123456",
-  "recipient": "+255712345678",
-  "channel": "sms",
-  "expires_at": "2019-08-24T14:20:22Z",
-  "sent": true
+  "phone_number":"+255672204508",
+  "app_key": "briq_65q2g35t7ty6q1sb",
+  "sender_id": "BRIQ",
+  "otp_length": 6,
+  "minutes_to_expire": 10,
+  "delivery_method": "sms"
 }
 ```
 
-Response — 422 Validation Error
+Response — 201 Created (example)
 ```json
-{ "detail":[{ "msg":"Invalid recipient or channel" }] }
+{
+  "success": true,
+  "message": "OTP Code sent successfully.",
+  "data": {
+    "expires_at": "2025-08-23T00:37:03.502607"
+  },
+  "status_code": 200
+}
 ```
 
----
+--- 
 
 ### Validate OTP
 
@@ -110,9 +118,16 @@ Request body (application/json)
 }
 ```
 
-Response — 200 OK
+Response — 200 OK (example)
 ```json
-{ "valid": true, "authenticated": true, "user_id": "a169451c-..." }
+{
+  "success": true,
+  "message": "OTP verified successfully.",
+  "data": {
+    "verified_at": "2025-08-23T00:28:15.567264"
+  },
+  "status_code": 200
+}
 ```
 
 Response — 400 / 422
@@ -137,6 +152,8 @@ Request body (application/json)
   "channel": "sms"         // optional override, "sms" or "voice"
 }
 ```
+
+You can also use the same alternate payload format (phone_number + app_key + sender_id + delivery_method) when implementing a resend flow in your application.
 
 Response — 200 OK
 ```json

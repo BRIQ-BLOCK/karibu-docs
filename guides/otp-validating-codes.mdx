@@ -4,21 +4,21 @@ description: Learn how to securely validate OTP codes using the Briq v0.7 API wi
 icon: 'shield-check'
 ---
 
-# Validating OTP Codes
+To validate an OTP, submit the OTP identifier or phone number, the developer app key and the code the user entered. Trim whitespace, ensure the code is numeric (if using numeric codes) and check length before calling the API. The same developer app used to request the code should be used to verify it.
 
-This guide covers how to validate OTP codes that users submit after receiving them via SMS. OTP validation requires the same developer app used for requesting the code.
+Example verification request:
+```bash
+curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: your_api_key_here" \
+  -d '{
+    "otp_id": "otp_xyz789abc123def",
+    "code": "123456",
+    "developer_app_id": "dev_app_abc123xyz789"
+  }'
+```
 
-## Prerequisites
-
-Before validating OTP codes, ensure you have:
-1. A valid `otp_id` from a previous OTP request
-2. The same `developer_app_id` used for requesting the code
-3. Your API key for authentication
-
-## Quick Start
-
-Validate an OTP code submitted by a user:
-
+A successful verification response indicates verified status and a timestamp; failures indicate invalid, expired, already-used codes or other errors. Handle both the success flag and verification status in your client logic, show clear and actionable messages to users, limit verification attempts to prevent brute force, and clear OTP state after success. If SMS delivery fails often in your region, prefer or offer the voice call delivery option since it tends to have higher delivery reliability.
 ```bash
 curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
 -H "Content-Type: application/json" \
@@ -44,10 +44,11 @@ curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
 ```json
 {
   "success": true,
-  "otp_id": "otp_xyz789abc123def",
-  "verified": true,
-  "message": "OTP verified successfully",
-  "verified_at": "2024-08-10T10:32:00Z"
+  "message": "OTP verified successfully.",
+  "data": {
+    "verified_at": "2025-08-23T00:28:15.567264"
+  },
+  "status_code": 200
 }
 ```
 
@@ -79,12 +80,6 @@ curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
 - Trim whitespace from user input
 - Handle case where user includes spaces in code
 
-### Error Handling
-- Check both `success` and `verified` fields in response
-- Provide clear error messages to users
-- Implement rate limiting to prevent brute force attacks
-- Log verification attempts for security monitoring
-
 ### Security Considerations
 - Store OTP IDs securely (session storage, encrypted database)
 - Don't expose OTP IDs in client-side logs
@@ -98,6 +93,10 @@ curl -X POST https://karibu.briq.tz/v1/otp/verify/ \
 - Allow users to resend OTP after reasonable delay
 
 ## Error Handling
+- Check both `success` and `verified` fields in response
+- Provide clear error messages to users
+- Implement rate limiting to prevent brute force attacks
+- Log verification attempts for security monitoring
 
 Common error codes and how to handle them:
 
