@@ -1,164 +1,251 @@
-# Karibu-OTP
+# Karibu OTP API Documentation
 
----
-title: "Karibu OTP — API Reference"
-description: "API reference and guide for One-Time Password (OTP) operations."
----
-
-## Karibu OTP — API Reference
-
-A compact technical reference for OTP operations. For conceptual guidance see the Guides: [OTP](/guides/otp). All endpoints require the X-API-Key header and operate within the authenticated user's workspace scope.
-
-### Common headers
-- X-API-Key (string, required)
-
-## OTP (One-Time Passwords) Guide
-
-OTP (One-Time Passwords) allow you to securely verify users during login, registration, or sensitive transactions. An OTP is typically a numeric or alphanumeric code sent to a user’s phone or email, and then validated by your system.
-
-### When to Use OTP
-* User authentication — secure logins, password resets.  
-* Transaction verification — approve payments or account actions.  
-* Access control — confirm identity before sensitive operations.  
-* Registration flows — verify new users’ phone numbers or emails.
-
-### How OTP Works
-1. Request an OTP → call the Briq API to generate and deliver a code (SMS or voice).  
-2. User receives OTP → code delivered to recipient.  
-3. Validate OTP → submit the code back to the Briq API for verification.  
-4. Grant or deny access based on validation response.
-
-Channels supported: sms, voice call.
-
-### Available Operations
-* Request OTP → Generate and send a one-time password.  
-* Validate OTP → Confirm that the provided OTP is correct and active.  
-* Resend OTP → Re-send an existing or new OTP to the recipient.
-
-### Steps to Use OTP
-1. Request an OTP using POST /v1/otp/request with recipient and channel.  
-2. Deliver code to user (SMS or voice).  
-3. Validate the code using POST /v1/otp/validate with the OTP and request id.  
-4. Optionally resend using POST /v1/otp/resend if the user did not receive it.
-
-### Best practices
-* Use short expiry times for OTPs (e.g., 5–10 minutes).  
-* Limit validation attempts to prevent brute-force.  
-* Rate-limit request/resend calls per recipient.  
-* Use numeric codes for SMS; voice may support longer alphanumeric tokens.
-
-## Interactive playgrounds
-
-The interactive API playground pages for OTP endpoints live under the `endpoints/` folder.
-
-- [Request OTP](/Karibu-OTP/endpoints/request-otp)
-- [Validate OTP](/Karibu-OTP/endpoints/validate-otp)
-- [Resend OTP](/Karibu-OTP/endpoints/resend-otp)
+The Karibu OTP API provides a robust solution for generating, verifying, resending, invalidating, and checking the status of One-Time Passwords (OTPs) for user authentication workflows. This API is designed to be developer-friendly, secure, and flexible for integration into various applications.
 
 ---
 
-### Request OTP
+## Authentication
 
-Endpoint  
+All API endpoints require an `X-API-Key` header for authentication.
+
+| Header      | Type   | Required | Description   |
+|-------------|--------|----------|---------------|
+| `X-API-Key` | string | Yes      | Your API key. |
+
+---
+
+## Endpoints Overview
+
+The Karibu OTP API supports the following endpoints:
+
+| Endpoint             | Method | Description                            |
+|----------------------|--------|----------------------------------------|
+| `/v1/otp/request`    | POST   | Generates a new OTP for a phone number. |
+| `/v1/otp/verify`     | POST   | Verifies an OTP entered by the user.   |
+| `/v1/otp/resend`     | POST   | Resends a new OTP to a phone number.   |
+| `/v1/otp/invalidate` | POST   | Invalidates an existing OTP.           |
+| `/v1/otp/status`     | GET    | Retrieves the current status of an OTP. |
+
+---
+
+## 1. Request OTP
+
+Generate a new OTP and send it to the specified phone number.
+
+### Endpoint
+
+```http
 POST /v1/otp/request
+```
 
-Headers
-- `X-API-Key` (required)
+### Request Body
 
-Request body (application/json)
+| Field               | Type   | Required | Default    | Description                                 |
+|---------------------|--------|----------|------------|---------------------------------------------|
+| `phone_number`      | string | Yes      | —          | Phone number in E.164 format (e.g., `+255712345678`). |
+| `app_key`           | string | Yes      | —          | Developer application key.                  |
+| `sender_id`         | string | No       | `BRIQ OTP` | Sender ID for SMS.                         |
+| `otp_length`        | int    | No       | `6`        | Length of the OTP code.                    |
+| `minutes_to_expire` | int    | No       | `10`       | OTP expiry time in minutes.                |
+| `delivery_method`   | string | No       | `sms`      | Delivery method: `sms` or `call`.          |
+| `message_template`  | string | No       | —          | Custom message template (use `{code}` for OTP). |
+
+### Request Example
+
 ```json
 {
-  "recipient": "+255712345678",
-  "channel": "sms",            // "sms" or "call"
-  "length": 6,
-  "minutes_to_expire": 5,
-  "message_template": "Your verification code is {code}"
+  "phone_number": "+255712345678",
+  "app_key": "devapp_123456",
+  "sender_id": "BRIQ OTP",
+  "otp_length": 6,
+  "minutes_to_expire": 10,
+  "delivery_method": "sms",
+  "message_template": "Your OTP is {code}"
 }
 ```
 
-Response — 201 Created
+### Response Example
+
 ```json
 {
-  "request_id": "otpreq_123456",
-  "recipient": "+255712345678",
-  "channel": "sms",
-  "expires_at": "2019-08-24T14:20:22Z",
-  "sent": true
+  "success": true,
+  "message": "OTP sent successfully",
+  "data": {},
+  "status_code": 200
 }
-```
-
-Response — 422 Validation Error
-```json
-{ "detail":[{ "msg":"Invalid recipient or channel" }] }
 ```
 
 ---
 
-### Validate OTP
+## 2. Verify OTP
 
-Endpoint  
-POST /v1/otp/validate
+Verify an OTP entered by the user.
 
-Headers
-- `X-API-Key` (required)
+### Endpoint
 
-Request body (application/json)
+```http
+POST /v1/otp/verify
+```
+
+### Request Body
+
+| Field          | Type   | Required | Description               |
+|----------------|--------|----------|---------------------------|
+| `phone_number` | string | Yes      | Phone number in E.164 format. |
+| `app_key`      | string | Yes      | Developer application key. |
+| `code`         | string | Yes      | OTP code to verify.       |
+
+### Request Example
+
 ```json
 {
-  "request_id": "otpreq_123456",
+  "phone_number": "+255712345678",
+  "app_key": "devapp_123456",
   "code": "123456"
 }
 ```
 
-Response — 200 OK
-```json
-{ "valid": true, "authenticated": true, "user_id": "a169451c-..." }
-```
+### Response Example
 
-Response — 400 / 422
 ```json
-{ "valid": false, "detail":[{ "msg":"Invalid or expired code" }] }
+{
+  "success": true,
+  "message": "OTP verified successfully",
+  "data": {},
+  "status_code": 200
+}
 ```
 
 ---
 
-### Resend OTP
+## 3. Resend OTP
 
-Endpoint  
+Resend a new OTP to the specified phone number.
+
+### Endpoint
+
+```http
 POST /v1/otp/resend
+```
 
-Headers
-- `X-API-Key` (required)
+### Request Body
 
-Request body (application/json)
+| Field               | Type   | Required | Default    | Description                                 |
+|---------------------|--------|----------|------------|---------------------------------------------|
+| `phone_number`      | string | Yes      | —          | Phone number in E.164 format.              |
+| `app_key`           | string | Yes      | —          | Developer application key.                 |
+| `sender_id`         | string | No       | `BRIQ OTP` | Sender ID for SMS.                         |
+| `otp_length`        | int    | No       | `6`        | Length of the OTP code.                    |
+| `minutes_to_expire` | int    | No       | `10`       | OTP expiry time in minutes.                |
+| `delivery_method`   | string | No       | `sms`      | Delivery method: `sms` or `call`.          |
+| `message_template`  | string | No       | —          | Custom message template (use `{code}`).    |
+
+### Request Example
+
 ```json
 {
-  "request_id": "otpreq_123456",
-  "channel": "sms"         // optional override, "sms" or "voice"
+  "phone_number": "+255712345678",
+  "app_key": "devapp_123456",
+  "sender_id": "BRIQ OTP",
+  "otp_length": 6,
+  "minutes_to_expire": 10,
+  "delivery_method": "sms",
+  "message_template": "Your OTP is {code}"
 }
 ```
 
-Response — 200 OK
+### Response Example
+
 ```json
 {
-  "request_id": "otpreq_123456",
-  "resent": true,
-  "sent_at": "2019-08-24T14:16:22Z"
+  "success": true,
+  "message": "OTP resent successfully",
+  "data": {},
+  "status_code": 200
 }
-```
-
-Response — 429 Too Many Requests / 422
-```json
-{ "detail":[{ "msg":"Rate limit exceeded or invalid request_id" }] }
 ```
 
 ---
 
-### Notes and best practices
+## 4. Invalidate OTP
 
-- Channels: use "sms" for text delivery or "voice" for automated call delivery.  
-- Keep OTP lifetime short and limit validation attempts.  
-- Store request_id for matching validation attempts and for troubleshooting.  
-- Log delivery and validation events for audit and debugging.
+Invalidate an existing OTP for a phone number.
 
-If you need SDK examples or additional language code samples, request the specific language and code samples will be added.
+### Endpoint
+
+```http
+POST /v1/otp/invalidate
+```
+
+### Request Body
+
+| Field          | Type   | Required | Description               |
+|----------------|--------|----------|---------------------------|
+| `phone_number` | string | Yes      | Phone number in E.164 format. |
+| `app_key`      | string | Yes      | Developer application key. |
+
+### Request Example
+
+```json
+{
+  "phone_number": "+255712345678",
+  "app_key": "devapp_123456"
+}
+```
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "message": "OTP invalidated successfully",
+  "data": {},
+  "status_code": 200
+}
+```
+
+---
+
+## 5. Check OTP Status
+
+Retrieve the current status of an OTP for a phone number.
+
+### Endpoint
+
+```http
+GET /v1/otp/status
+```
+
+### Query Parameters
+
+| Field          | Type   | Required | Description               |
+|----------------|--------|----------|---------------------------|
+| `phone_number` | string | Yes      | Phone number in E.164 format. |
+| `app_key`      | string | Yes      | Developer application key. |
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "message": "OTP is valid",
+  "data": {},
+  "status_code": 200
+}
+```
+
+---
+
+## Standard Response Format
+
+All endpoints return responses in the following JSON format:
+
+```json
+{
+  "success": true,
+  "message": "string",
+  "data": {},
+  "status_code": 200
+}
+```
+

@@ -1,83 +1,341 @@
+# Karibu Messages API Documentation
+
+The Karibu Messages API allows developers to send instant and campaign-based messages, retrieve message logs, and access message history for authenticated users or specific recipients. This API is designed for seamless integration into applications requiring messaging capabilities.
+
 ---
-title: "Karibu Messages — Guide"
-description: "Guide for instant and campaign messaging with Briq."
+
+## Authentication
+
+All API endpoints require an `X-API-Key` header for authentication.
+
+| Header      | Type   | Required | Description   |
+|-------------|--------|----------|---------------|
+| `X-API-Key` | string | Yes      | Your API key. |
+
 ---
 
-# Messaging
+## Endpoints Overview
 
-Messaging allows you to communicate directly with your users via SMS. Briq provides two main ways to send messages:
+The Karibu Messages API supports the following endpoints:
 
-- Instant Messages → Send a single or small batch of messages immediately.  
-- Campaign Messages → Send messages at scale, to large groups, often with scheduling or personalization.
+| Endpoint                                    | Method | Description                                           |
+|---------------------------------------------|--------|-------------------------------------------------------|
+| `/v1/message/send-instant`                  | POST   | Sends an instant message to one or multiple recipients. |
+| `/v1/message/send-campaign`                 | POST   | Sends a message to all contacts in a campaign.         |
+| `/v1/message/logs`                          | GET    | Fetches all message logs for the authenticated user.   |
+| `/v1/message/history`                       | GET    | Retrieves all messages sent by the authenticated user. |
+| `/v1/message/history/recipient/{recipient}` | GET    | Retrieves all messages sent to a specific recipient.   |
+| `/v1/message/message-log/{message_id}`      | GET    | Retrieves details of a specific message.               |
 
-## When to Use Messaging
+---
 
-- Notifications - order updates, delivery confirmations, password resets.  
-- Marketing Campaigns - promotions, offers, event invitations.  
-- Service Alerts - downtime notices, reminders, system warnings. 
+## 1. Send Instant Message
 
-## How Messaging Works
+Send an instant message to one or multiple recipients.
 
-1. Compose a Message → Define recipient(s), message content, and sender ID.  
-2. Send Message → Use Instant Message API for one-off messages or Campaign API for bulk sends.  
-3. Track Delivery → Delivery reports provide status updates for each message (e.g., SENT, DELIVERED, FAILED).
+### Endpoint
 
-## Messaging Types
+```http
+POST /v1/message/send-instant
+```
 
-### Instant Messages
-- Best for real-time alerts or low-volume communication.  
-- Example: “Your verification code is 123456.”
+### Request Body
 
-### Campaign Messages
-- Best for marketing or bulk communication.  
-- Supports scheduling, targeting, and personalization.  
-- Example: “Get 20% off all items this weekend at BriqStore. Visit briqstore.com.”
+| Field         | Type            | Required | Description                                    |
+|---------------|-----------------|----------|------------------------------------------------|
+| `content`     | string          | Yes      | Message content.                               |
+| `recipients`  | array of strings | Yes      | List of recipient phone numbers (e.g., `255788344348`). |
+| `sender_id`   | string          | Yes      | Sender ID for the message.                     |
+| `campaign_id` | string or null  | No       | Campaign ID associated with the message.       |
+| `groups`      | array of strings or null | No | List of group IDs for recipients.              |
 
-## Example Workflow
+### Request Example
 
-### Sending an Instant Message
 ```json
 {
-  "recipient": "255712345678",
-  "message": "Hello, your order has been confirmed!",
-  "sender_id": "BRIQ"
+  "content": "Ping from Briq",
+  "recipients": ["255788344348"],
+  "sender_id": "string",
+  "campaign_id": "string",
+  "groups": ["group_id", "group_id"]
 }
 ```
-Response:
-```json
-{ "message_id": "uuid", "status": "sent" }
-```
 
-### Sending a Campaign Message
+### Response Example
+
 ```json
 {
-  "recipients": ["255712345678","255713987654"],
-  "message": "Flash Sale! 30% off all items today only!",
-  "sender_id": "BRIQ",
-  "schedule_time": "2025-08-22T18:00:00Z"
+  "success": true,
+  "message": "Message sent successfully",
+  "data": {},
+  "status_code": 200
 }
 ```
-Response:
+
+### Error Response (422)
+
 ```json
-{ "campaign_id": "uuid", "status": "scheduled", "total_recipients": 2 }
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
 ```
 
-## Delivery Reports
+---
 
-- Each message or campaign can generate a delivery report with statuses such as:
-  - SENT - message accepted by the gateway
-  - DELIVERED - message reached the recipient’s device
-  - FAILED - message could not be delivered
+## 2. Send Campaign Message
 
-## Best Practices
+Send a message to all contacts in a specified campaign.
 
-- Use Instant Messages for critical, time-sensitive updates.  
-- Use Campaign Messages for marketing, respecting opt-in/opt-out laws.  
-- Capture delivery reports to monitor success and troubleshoot failures.  
-- Segment audiences for more effective campaigns.  
-- Schedule sends to match recipient time zones and peak engagement windows.
+### Endpoint
 
-## Interactive playgrounds
+```http
+POST /v1/message/send-campaign
+```
 
-- Instant Messages endpoints: /Karibu-Messages/endpoints/send-message  
-- Campaign endpoints: /Karibu-Campaign/endpoints/send-campaign-message
+### Request Body
+
+| Field         | Type            | Required | Default                          | Description                                    |
+|---------------|-----------------|----------|----------------------------------|------------------------------------------------|
+| `campaign_id` | string          | Yes      | —                                | Campaign ID for the message.                   |
+| `group_id`    | string          | Yes      | —                                | Group ID for the campaign recipients.          |
+| `content`     | string          | Yes      | —                                | Message content.                               |
+| `sender_id`   | string          | Yes      | —                                | Sender ID (2–13 characters).                   |
+| `start_date`  | string or null  | No       | `"2025-08-23T02:22:43.202062"` | When sending starts (ISO 8601 format).         |
+| `end_date`    | string or null  | No       | —                                | When sending ends (ISO 8601 format).           |
+| `frequency`   | string or null  | No       | `"once"`                         | Campaign frequency (e.g., `once`).             |
+
+### Request Example
+
+```json
+{
+  "campaign_id": "string",
+  "group_id": "string",
+  "content": "Campaign message from Briq",
+  "sender_id": "string",
+  "start_date": "2025-08-23T02:22:43.202062",
+  "end_date": "2019-08-24T14:15:22Z",
+  "frequency": "once"
+}
+```
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "message": "Campaign message sent successfully",
+  "data": {},
+  "status_code": 200
+}
+```
+
+### Error Response (422)
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
+```
+
+---
+
+## 3. Get Message Logs
+
+Fetch all message logs for the authenticated user.
+
+### Endpoint
+
+```http
+GET /v1/message/logs
+```
+
+### Response Example
+
+```json
+{
+  "user_id": "string",
+  "logs": [{}],
+  "success": true,
+  "message": "Logs retrieved successfully",
+  "status_code": 200
+}
+```
+
+### Error Response (422)
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
+```
+
+---
+
+## 4. Get User Messages
+
+Retrieve all messages sent by the authenticated user.
+
+### Endpoint
+
+```http
+GET /v1/message/history
+```
+
+### Response Example
+
+```json
+[
+  {
+    "message_id": "string",
+    "user_id": "string",
+    "recipient": "string",
+    "campaign_id": "string",
+    "channel_id": "string",
+    "sender_id": "string",
+    "content": "string",
+    "status": "pending",
+    "sent_at": "2019-08-24T14:15:22Z"
+  }
+]
+```
+
+### Error Response (422)
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
+```
+
+---
+
+## 5. Get Messages By Recipient
+
+Retrieve all messages sent to a specific recipient.
+
+### Endpoint
+
+```http
+GET /v1/message/history/recipient/{recipient}
+```
+
+### Path Parameters
+
+| Field      | Type   | Required | Description                   |
+|------------|--------|----------|-------------------------------|
+| `recipient`| string | Yes      | Recipient phone number.       |
+
+### Response Example
+
+```json
+[
+  {
+    "message_id": "string",
+    "user_id": "string",
+    "recipient": "string",
+    "campaign_id": "string",
+    "channel_id": "string",
+    "sender_id": "string",
+    "content": "string",
+    "status": "pending",
+    "sent_at": "2019-08-24T14:15:22Z"
+  }
+]
+```
+
+### Error Response (422)
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
+```
+
+---
+
+## 6. Get Message Detail
+
+Retrieve details of a specific message by its ID.
+
+### Endpoint
+
+```http
+GET /v1/message/message-log/{message_id}
+```
+
+### Path Parameters
+
+| Field        | Type   | Required | Description                   |
+|--------------|--------|----------|-------------------------------|
+| `message_id` | string | Yes      | Unique message ID.            |
+
+### Response Example
+
+```json
+{
+  "message_id": "string",
+  "user_id": "string",
+  "recipient": "string",
+  "campaign_id": "string",
+  "channel_id": "string",
+  "sender_id": "string",
+  "content": "string",
+  "status": "pending",
+  "sent_at": "2019-08-24T14:15:22Z",
+  "success": true,
+  "message": "Message details retrieved successfully",
+  "status_code": 200
+}
+```
+
+### Error Response (422)
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
+```
+
+---
+
+## Standard Response Format
+
+Unless specified otherwise, successful responses follow this JSON format:
+
+```json
+{
+  "success": true,
+  "message": "string",
+  "data": {},
+  "status_code": 200
+}
+```
+
+Error responses (e.g., 422 Validation Error) follow this format:
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
+```
