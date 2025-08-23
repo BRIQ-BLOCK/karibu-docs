@@ -1,314 +1,269 @@
-# Karibu-Campaign
-
 ---
-title: "Karibu Campaign — API Reference"
-description: "API reference for Campaign operations."
+title: Campaign API
+description: Create and manage SMS campaigns within developer-accessible workspaces using the Karibu Campaign API.
+icon: 'bullhorn'
 ---
 
-## Karibu Campaign — API Reference
+# Karibu Campaign API Documentation
 
-A compact technical reference for campaign operations. For conceptual guidance see the Guides: [Campaigns](/guides/campaigns). All endpoints require the X-API-Key header and operate within the authenticated user's workspace scope.
-
-### Common headers
-- X-API-Key (string, required)
-
-## Campaigns Guide
-
-Campaigns let you organize and send messages to groups of recipients under a workspace. They are typically used for marketing, notifications, or scheduled announcements. Each campaign belongs to a workspace, and can be linked with multiple messages.
-
-### When to Use Campaigns
-
-* **Bulk messaging**: Send one message to many recipients at once.
-* **Workspace-level control**: Keep campaigns tied to a specific workspace.
-* **Tracking**: Retrieve logs and reports for all messages sent under a campaign.
-* **Integration**: Associate messages, groups, and sender IDs to specific campaigns.
-
-### How Campaigns Work
-
-1. A workspace must exist before creating a campaign.
-2. Campaigns define the context for bulk messages (recipients, groups, sender IDs).
-3. You can later retrieve campaign details or update metadata such as name or description.
-4. Campaigns provide APIs for sending campaign-based messages.
-
-### Available Operations
-
-* **Create Campaign** → Define a new campaign under a workspace.
-* **List Campaigns** → View all campaigns associated with your account.
-* **Get Campaign** → Retrieve a campaign by its ID.
-* **Update Campaign** → Modify campaign details.
-* **Send Campaign Message** → Deliver messages through an existing campaign.
-
-### Steps to Create and Use a Campaign
-
-1. **Ensure you have a workspace**
-   * Campaigns are scoped to workspaces. Create or select an existing workspace first.
-
-2. **Create a Campaign**
-   * Use the `POST /v1/campaigns/` endpoint.
-   * Provide:
-     * `campaign_name`: A descriptive name for your campaign.
-     * `campaign_description`: Purpose of the campaign.
-     * `workspace_id`: The ID of the workspace where this campaign belongs.
-
-3. **Send Campaign Messages**
-   * Use the campaign ID to send bulk messages to recipients.
-   * Associate messages with groups, sender IDs, and delivery methods.
-
-4. **Track Campaign Performance**
-   * Retrieve campaign details to monitor message delivery status.
-   * Use campaign logs for reporting and analytics.
-
-### Best Practices
-
-* Use descriptive campaign names to easily identify their purpose.
-* Group related messages under the same campaign for better organization.
-* Monitor campaign performance regularly to optimize delivery rates.
-* Archive completed campaigns to keep your workspace organized.
-
-## Interactive playgrounds
-
-The interactive API playground pages for campaign endpoints live under the
-`endpoints/` folder. Each page is an MDX endpoint page which Mintlify can render
-as an interactive playground when API settings are configured in `docs.json`.
-
-- [Create Campaign](/Karibu-Campaign/endpoints/create-campaign)
-- [List Campaigns](/Karibu-Campaign/endpoints/list-campaigns)
-- [Get Campaign](/Karibu-Campaign/endpoints/get-campaign)
-- [Update Campaign](/Karibu-Campaign/endpoints/update-campaign)
-- [Delete Campaign](/Karibu-Campaign/endpoints/delete-campaign)
-- [Send Campaign Message](/Karibu-Campaign/endpoints/send-campaign-message)
+The Karibu Campaign API allows developers to create, list, retrieve, and update SMS campaigns within developer-accessible workspaces. This API is designed for organizing bulk messaging efforts efficiently and securely.
 
 ---
 
-### Create Campaign
+## Authentication
 
-Endpoint
-POST /v1/campaigns/
+All API endpoints require an `X-API-Key` header for authentication.
 
-Headers
-- `X-API-Key` (required)
+| Header      | Type   | Required | Description   |
+|-------------|--------|----------|---------------|
+| `X-API-Key` | string | Yes      | Your API key. |
 
-Request body (application/json)
-```json
-{
-  "campaign_name": "string",
-  "campaign_description": "string",
-  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9"
-}
+---
+
+## Endpoints Overview
+
+The Karibu Campaign API supports the following endpoints:
+
+| Endpoint                     | Method | Description                                           |
+|------------------------------|--------|-------------------------------------------------------|
+| `/v1/campaign/create/`       | POST   | Creates a new campaign in a workspace.                 |
+| `/v1/campaign/all/`          | GET    | Retrieves all campaigns for the authenticated user.    |
+| `/v1/campaign/{campaign_id}/`| GET    | Retrieves details of a specific campaign.              |
+| `/v1/campaign/update/{campaign_id}` | PATCH | Updates an existing campaign.                    |
+
+---
+
+## 1. Create Campaign
+
+Create a new campaign in a developer-accessible workspace owned by the authenticated user.
+
+### Endpoint
+
+```http
+POST /v1/campaign/create/
 ```
 
-Response — 201 Created
+### Request Body
+
+| Field          | Type            | Required | Description                              |
+|----------------|-----------------|----------|------------------------------------------|
+| `workspace_id` | string (UUID)   | Yes      | ID of the workspace for the campaign.    |
+| `name`         | string          | Yes      | Name of the campaign.                    |
+| `description`  | string or null  | No       | Description of the campaign.             |
+| `launch_date`  | string (date-time) | Yes   | Campaign launch date (ISO 8601 format).  |
+
+### Request Example
+
 ```json
 {
-  "campaign_id": "camp_123456789",
-  "campaign_name": "string",
-  "campaign_description": "string",
   "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
-  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
-  "created_at": "2019-08-24T14:15:22Z",
-  "is_active": true,
-  "messages_sent": 0,
-  "total_recipients": 0
+  "name": "Summer Sale 2025",
+  "description": "Promotional campaign for summer discounts",
+  "launch_date": "2019-08-24T14:15:22Z"
 }
 ```
 
-Response — 422 Validation Error
+### Response Example
+
 ```json
 {
-  "detail": [ { "msg": "Workspace not found or unauthorized" } ]
-}
-```
-
----
-
-### List Campaigns
-
-Endpoint
-GET /v1/campaigns/
-
-Headers
-- `X-API-Key` (required)
-
-Query parameters
-- `workspace_id` (string, optional): Filter by workspace ID
-- `is_active` (boolean, optional): Filter by active status
-
-Response — 200 OK
-```json
-[
-  {
-    "campaign_id": "camp_123456789",
-    "campaign_name": "string",
-    "campaign_description": "string",
-    "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
-    "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
-    "created_at": "2019-08-24T14:15:22Z",
-    "is_active": true,
-    "messages_sent": 150,
-    "total_recipients": 200
-  }
-]
-```
-
-Response — 401 Unauthorized / 422
-```json
-{
-  "detail": [ { "msg": "Unauthorized request" } ]
-}
-```
-
----
-
-### Get Campaign
-
-Endpoint
-GET /v1/campaigns/{campaign_id}
-
-Path parameters
-- `campaign_id` (string, required): Campaign ID
-
-Headers
-- `X-API-Key` (required)
-
-Response — 200 OK
-```json
-{
-  "campaign_id": "camp_123456789",
-  "campaign_name": "string",
-  "campaign_description": "string",
+  "success": true,
+  "campaign_id": "78614b6c-fe7c-41e2-8e25-c9b3a3c91904",
   "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
-  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "name": "Summer Sale 2025",
+  "description": "Promotional campaign for summer discounts",
+  "launch_date": "2019-08-24T14:15:22Z",
+  "created_by": "ee824cad-d7a6-4f48-87dc-e8461a9201c4",
   "created_at": "2019-08-24T14:15:22Z",
-  "is_active": true,
-  "messages_sent": 150,
-  "total_recipients": 200
+  "status_code": 200
 }
 ```
 
-Response — 404 / 422
+### Error Response (422)
+
 ```json
 {
-  "detail": [ { "msg": "Campaign not found or unauthorized" } ]
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
 }
 ```
 
 ---
 
-### Update Campaign
+## 2. List Campaigns
 
-Endpoint
-PUT /v1/campaigns/{campaign_id}
+Retrieve all campaigns for the authenticated user in developer-accessible workspaces they own.
 
-Path parameters
-- `campaign_id` (string, required): Campaign ID
+### Endpoint
 
-Headers
-- `X-API-Key` (required)
+```http
+GET /v1/campaign/all/
+```
 
-Request body (application/json)
+### Response Example
+
 ```json
 {
-  "campaign_name": "string",
-  "campaign_description": "string",
-  "is_active": true
+  "success": true,
+  "campaigns": [
+    {
+      "campaign_id": "78614b6c-fe7c-41e2-8e25-c9b3a3c91904",
+      "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+      "name": "Summer Sale 2025",
+      "description": "Promotional campaign for summer discounts",
+      "launch_date": "2019-08-24T14:15:22Z",
+      "created_by": "ee824cad-d7a6-4f48-87dc-e8461a9201c4",
+      "created_at": "2019-08-24T14:15:22Z"
+    }
+  ],
+  "status_code": 200
 }
 ```
 
-Response — 200 OK
+### Error Response (422)
+
 ```json
 {
-  "campaign_id": "camp_123456789",
-  "campaign_name": "string",
-  "campaign_description": "string",
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
+}
+```
+
+---
+
+## 3. Get Campaign Details
+
+Retrieve details of a specific campaign in a developer-accessible workspace owned by the user.
+
+### Endpoint
+
+```http
+GET /v1/campaign/{campaign_id}/
+```
+
+### Path Parameters
+
+| Field         | Type   | Required | Description                   |
+|---------------|--------|----------|-------------------------------|
+| `campaign_id` | string | Yes      | Unique campaign ID.           |
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "campaign_id": "78614b6c-fe7c-41e2-8e25-c9b3a3c91904",
   "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
-  "user_id": "a169451c-8525-4352-b8ca-070dd449a1a5",
+  "name": "Summer Sale 2025",
+  "description": "Promotional campaign for summer discounts",
+  "launch_date": "2019-08-24T14:15:22Z",
+  "created_by": "ee824cad-d7a6-4f48-87dc-e8461a9201c4",
   "created_at": "2019-08-24T14:15:22Z",
-  "is_active": false,
-  "messages_sent": 150,
-  "total_recipients": 200
+  "status_code": 200
 }
 ```
 
-Response — 422 Validation Error
+### Error Response (422)
+
 ```json
 {
-  "detail": [ { "msg": "Invalid update request" } ]
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
 }
 ```
 
 ---
 
-### Delete Campaign
+## 4. Update Campaign
 
-Endpoint
-DELETE /v1/campaigns/{campaign_id}
+Update an existing campaign in a developer-accessible workspace owned by the user.
 
-Path parameters
-- `campaign_id` (string, required): Campaign ID
+### Endpoint
 
-Headers
-- `X-API-Key` (required)
+```http
+PATCH /v1/campaign/update/{campaign_id}
+```
 
-Response — 204 No Content
+### Path Parameters
 
-Response — 404 / 422
+| Field         | Type   | Required | Description                   |
+|---------------|--------|----------|-------------------------------|
+| `campaign_id` | string | Yes      | Unique campaign ID.           |
+
+### Request Body
+
+| Field          | Type            | Required | Description                              |
+|----------------|-----------------|----------|------------------------------------------|
+| `name`         | string or null  | No       | Updated name of the campaign.            |
+| `description`  | string or null  | No       | Updated description of the campaign.     |
+| `launch_date`  | string or null  | No       | Updated launch date (ISO 8601 format).   |
+
+### Request Example
+
 ```json
 {
-  "detail": [ { "msg": "Campaign not found or unauthorized" } ]
+  "name": "Updated Summer Sale 2025",
+  "description": "Updated promotional campaign with extended offers",
+  "launch_date": "2019-08-24T14:15:22Z"
+}
+```
+
+### Response Example
+
+```json
+{
+  "success": true,
+  "campaign_id": "78614b6c-fe7c-41e2-8e25-c9b3a3c91904",
+  "workspace_id": "0967198e-ec7b-4c6b-b4d3-f71244cadbe9",
+  "name": "Updated Summer Sale 2025",
+  "description": "Updated promotional campaign with extended offers",
+  "launch_date": "2019-08-24T14:15:22Z",
+  "created_by": "ee824cad-d7a6-4f48-87dc-e8461a9201c4",
+  "created_at": "2019-08-24T14:15:22Z",
+  "status_code": 200
+}
+```
+
+### Error Response (422)
+
+```json
+{
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
 }
 ```
 
 ---
 
-### Send Campaign Message
+## Standard Response Format
 
-Endpoint
-POST /v1/campaigns/{campaign_id}/send
+Unless specified otherwise, successful responses follow this JSON format:
 
-Path parameters
-- `campaign_id` (string, required): Campaign ID
-
-Headers
-- `X-API-Key` (required)
-
-Request body (application/json)
 ```json
 {
-  "message_content": "string",
-  "recipients": ["+255712345678", "+255987654321"],
-  "sender_id": "BRIQ",
-  "delivery_method": "sms",
-  "schedule_time": "2019-08-24T14:15:22Z"
+  "success": true,
+  "message": "string",
+  "data": {},
+  "status_code": 200
 }
 ```
 
-Response — 200 OK
+Error responses (e.g., 422 Validation Error) follow this format:
+
 ```json
 {
-  "message_id": "msg_123456789",
-  "campaign_id": "camp_123456789",
-  "status": "queued",
-  "recipients_count": 2,
-  "scheduled_for": "2019-08-24T14:15:22Z",
-  "created_at": "2019-08-24T14:15:22Z"
+  "success": false,
+  "message": "Validation error",
+  "data": {},
+  "status_code": 422
 }
 ```
 
-Response — 422 Validation Error
-```json
-{
-  "detail": [ { "msg": "Invalid message content or recipients" } ]
-}
-```
-
----
-
-### Notes and best practices
-
-- Campaigns are scoped to workspaces and help organize bulk messaging efforts.
-- Use descriptive campaign names to easily identify their purpose.
-- Monitor campaign performance through the `messages_sent` and `total_recipients` fields.
-- Deactivate completed campaigns by setting `is_active = false` instead of deleting them.
-- Use scheduled messaging to optimize delivery times for your audience.
-
-If you need SDK examples or additional language code samples, request the specific language and we will add x-codeSamples for each endpoint.

@@ -6,215 +6,86 @@ icon: 'bullhorn'
 
 # Campaign Messages
 
-Campaigns provide a way to organize and manage bulk SMS messaging within workspaces. They help you group related messages and track your bulk messaging activities effectively.
+Campaigns help you organize and manage bulk SMS messaging within workspaces, making it easy to group and track your messaging efforts effectively.
 
 ## What are Campaigns?
 
-Campaigns are containers within workspaces that help you organize your bulk messaging efforts. Each campaign belongs to a specific workspace and can be used to send messages to multiple recipients.
+Campaigns are containers within workspaces designed for organizing bulk messaging. Each campaign is tied to a specific workspace and supports sending messages to multiple recipients.
 
 ### Campaign vs Instant Messages
 
-| Feature | Campaign Messages | Instant Messages |
-|---------|------------------|------------------|
-| **Organization** | Grouped under campaigns in workspaces | Individual messages |
-| **Recipients** | Multiple phone numbers | Single phone number |
-| **Management** | Created and tracked within campaigns | Sent directly |
-| **Use Case** | Bulk communications, marketing | Notifications, alerts |
+| Feature            | Campaign Messages                  | Instant Messages             |
+|--------------------|------------------------------------|------------------------------|
+| **Organization**   | Grouped in campaigns and workspaces | Sent individually            |
+| **Recipients**     | Multiple phone numbers             | Single phone number          |
+| **Management**     | Tracked within campaigns           | Sent directly                |
+| **Use Case**       | Bulk communications, marketing     | Notifications, alerts         |
 
 ## When to Use Campaigns
 
 ### Bulk Communications
-- **Marketing**: Promotional messages to customer lists
-- **Announcements**: Company updates to multiple recipients  
-- **Events**: Invitations and event notifications
-- **Newsletters**: Regular updates to subscriber lists
+- **Marketing**: Promote products or services to customer lists.
+- **Announcements**: Share company updates with multiple recipients.
+- **Events**: Send invitations or notifications for events.
+- **Newsletters**: Deliver regular updates to subscribers.
 
 ### Organization Benefits
-- **Project Tracking**: Group messages by initiative or project
-- **Workspace Management**: Keep campaigns organized within workspaces
-- **Bulk Sending**: Send the same message to multiple recipients efficiently
+- **Project Tracking**: Group messages by project or initiative.
+- **Workspace Management**: Keep campaigns organized within workspaces.
+- **Bulk Sending**: Efficiently send messages to large recipient lists.
 
 ## Managing Campaigns
 
-### Creating a Campaign
+#### Creating a Campaign
+Set up a campaign by specifying a name, description, and the workspace it belongs to.
 
-```bash
-curl -X POST https://karibu.briq.tz/v1/campaigns/create/ \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{
-  "workspace_id": "ws_abc123xyz789def",
-  "name": "Summer Sale 2024",
-  "description": "Promotional campaign for summer discounts and offers"
-}'
-```
+#### Listing All Campaigns
+Retrieve a list of all campaigns in your account for easy management.
 
-**Response:**
-```json
-{
-  "success": true,
-  "campaign_id": "camp_xyz789abc123def",
-  "workspace_id": "ws_abc123xyz789def",
-  "name": "Summer Sale 2024", 
-  "description": "Promotional campaign for summer discounts and offers",
-  "created_at": "2024-08-10T10:30:00Z"
-}
-```
+#### Getting Campaign Details
+View details of a specific campaign, including its name, description, and creation date.
 
-### Listing All Campaigns
-
-```bash
-curl -X GET https://karibu.briq.tz/v1/campaigns/all/ \
--H "X-API-Key: your_api_key_here"
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "campaigns": [
-    {
-      "campaign_id": "camp_xyz789abc123def",
-      "workspace_id": "ws_abc123xyz789def",
-      "name": "Summer Sale 2024",
-      "description": "Promotional campaign for summer discounts and offers",
-      "created_at": "2024-08-10T10:30:00Z"
-    }
-  ]
-}
-```
-
-### Getting Campaign Details
-
-```bash
-curl -X GET https://karibu.briq.tz/v1/campaigns/camp_xyz789abc123def \
--H "X-API-Key: your_api_key_here"
-```
-
-### Updating a Campaign
-
-```bash
-curl -X PATCH https://karibu.briq.tz/v1/campaigns/update/camp_xyz789abc123def \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{
-  "name": "Updated Summer Sale 2024",
-  "description": "Updated promotional campaign with extended offers"
-}'
-```
+#### Updating a Campaign
+Modify a campaign’s name or description to keep it up to date.
 
 ## Sending Campaign Messages
 
-Once you have a campaign created, you can send messages to multiple recipients through it:
-
-```bash
-curl -X POST https://karibu.briq.tz/v1/messages/campaign/ \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{
-  "campaign_id": "camp_xyz789abc123def",
-  "phone_numbers": [
-    "255712345678",
-    "255787654321", 
-    "255798765432"
-  ],
-  "message": "🏖️ Summer Sale: 30% off all items! Use code SUMMER30. Shop now: bit.ly/summer-sale",
-  "sender_id": "YourStore"
-}'
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "campaign_id": "camp_xyz789abc123def",
-  "message_ids": ["msg_123", "msg_124", "msg_125"],
-  "recipients_count": 3,
-  "message": "🏖️ Summer Sale: 30% off all items! Use code SUMMER30. Shop now: bit.ly/summer-sale",
-  "sender_id": "YourStore",
-  "sent_at": "2024-08-10T10:30:00Z"
-}
-```
+Send messages to multiple recipients within a campaign by specifying the campaign, recipient phone numbers, message content, and sender ID.
 
 ### Campaign Message Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `campaign_id` | string | Yes | ID of the campaign to send through |
-| `phone_numbers` | array | Yes | List of recipient phone numbers |
-| `message` | string | Yes | SMS message content |
-| `sender_id` | string | Yes | Your brand name or sender identifier |
-
+- **Campaign ID**: The unique identifier for the campaign.
+- **Phone Numbers**: A list of recipient phone numbers.
+- **Message**: The SMS content.
+- **Sender ID**: Your brand name or identifier.
 
 ## Best Practices
 
 ### Campaign Organization
-1. **Descriptive Names**: Use clear, specific campaign names
-2. **Workspace Structure**: Group related campaigns in appropriate workspaces
-3. **Documentation**: Add meaningful descriptions to campaigns
-4. **Regular Cleanup**: Archive old campaigns to keep lists manageable
+- Use clear, descriptive names for campaigns.
+- Group related campaigns in appropriate workspaces.
+- Add meaningful descriptions for easy reference.
+- Archive old campaigns to keep your workspace tidy.
 
 ### Message Content
-1. **Clear Purpose**: Make the campaign intent obvious in the message
-2. **Brand Consistency**: Use consistent sender IDs across campaigns
-3. **Call to Action**: Include clear next steps for recipients
-4. **Length Management**: Keep messages concise but informative
+- Ensure the campaign’s purpose is clear in the message.
+- Use consistent sender IDs for brand recognition.
+- Include a clear call to action for recipients.
+- Keep messages concise but informative.
 
 ### Recipient Management
-1. **Phone Number Format**: Ensure proper formatting with country codes
-2. **List Validation**: Verify phone numbers before sending
-3. **Batch Size**: Consider sending limits and split large lists if needed
-4. **Opt-out Compliance**: Respect recipient preferences and regulations
+- Format phone numbers with country codes (e.g., 255 for Tanzania).
+- Validate phone numbers before sending.
+- Split large recipient lists if necessary to respect sending limits.
+- Comply with opt-out regulations and recipient preferences.
 
 ## Common Use Cases
 
 ### Marketing Campaigns
-```bash
-# Create marketing campaign
-curl -X POST https://karibu.briq.tz/v1/campaigns/create/ \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{
-  "workspace_id": "ws_marketing123",
-  "name": "Product Launch Q4",
-  "description": "New product launch campaign for Q4 2024"
-}'
-
-# Send promotional message
-curl -X POST https://karibu.briq.tz/v1/messages/campaign/ \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{
-  "campaign_id": "camp_launch123",
-  "phone_numbers": ["255712345678", "255787654321"],
-  "message": "🚀 Introducing our latest product! Early bird discount: 25% off. Get yours today!",
-  "sender_id": "TechCorp"
-}'
-```
+Create a campaign for product launches or promotions and send targeted messages to customer lists with discounts or special offers.
 
 ### Event Notifications
-```bash
-# Create event campaign  
-curl -X POST https://karibu.briq.tz/v1/campaigns/create/ \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{
-  "workspace_id": "ws_events456",
-  "name": "Annual Conference 2024",
-  "description": "Communications for annual conference attendees"
-}'
+Set up a campaign for events like conferences and send reminders or invitations to attendees with event details.
 
-# Send event reminder
-curl -X POST https://karibu.briq.tz/v1/messages/campaign/ \
--H "Content-Type: application/json" \
--H "X-API-Key: your_api_key_here" \
--d '{
-  "campaign_id": "camp_conference456",
-  "phone_numbers": ["255712345678", "255787654321"],
-  "message": "📅 Reminder: Annual Conference tomorrow at 9 AM. Venue: City Hall. See you there!",
-  "sender_id": "Conference"
-}'
-```
 ---
 
 *For detailed API reference, visit [Campaign API](/Karibu-Campaign)*
