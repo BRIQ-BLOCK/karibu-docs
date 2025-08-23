@@ -7,53 +7,22 @@
     },
     "servers": [
         {
-            "url": "http://karibu.briq.tz",
-            "description": "LocalPass"
-        },
-        {
             "url": "https://karibu.briq.tz",
             "description": "Secure"
+        },
+        {
+            "url": "http://karibu.briq.tz",
+            "description": "LocalPass"
         }
     ],
     "paths": {
-        "/": {
-            "get": {
-                "summary": "Hello Briq",
-                "operationId": "hello_briq__get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/version": {
-            "get": {
-                "summary": "Get Version",
-                "operationId": "get_version_version_get",
-                "responses": {
-                    "200": {
-                        "description": "Successful Response",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    }
-                }
-            }
-        },
+
         "/karibu/x-api-key": {
             "get": {
                 "tags": [
                     "Developer"
                 ],
-                "summary": "Developer Stats",
+                "summary": "Test out if your API key is valid",
                 "operationId": "developer_stats_karibu_x_api_key_get",
                 "parameters": [
                     {
